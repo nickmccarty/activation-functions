@@ -403,11 +403,14 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .framework-tabs {
     display: flex;
     gap: 0.5rem;
+    flex-shrink: 0;
 }
 
 .framework-tab {
@@ -424,6 +427,7 @@ body {
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
+    white-space: nowrap;
     box-shadow: 
         4px 4px 8px var(--shadow-dark),
         -4px -4px 8px var(--shadow-light);
@@ -607,41 +611,302 @@ body {
     .modal-content {
         width: 95%;
         margin: 1rem;
+        max-height: 95vh;
     }
     
     .modal-body {
         padding: 1rem;
     }
     
+    .modal-header {
+        padding: 1rem 1rem 0.5rem;
+    }
+    
+    .modal-header h2 {
+        font-size: 1.5rem;
+        line-height: 1.2;
+    }
+    
     .filter-tabs {
         gap: 0.5rem;
+        justify-content: center;
     }
     
     .filter-tab {
         padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .framework-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .framework-header h3 {
+        margin-bottom: 0;
+        font-size: 1.2rem;
+    }
+    
+    .framework-tabs {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .framework-tab {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.85rem;
+        flex: 1;
+        justify-content: center;
+        min-width: 0;
+    }
+    
+    .framework-tab i {
         font-size: 0.9rem;
     }
     
     .properties-grid {
         grid-template-columns: 1fr;
     }
+    
+    .code-block pre {
+        font-size: 0.8rem;
+        padding: 1rem;
+    }
+    
+    .checklist-item {
+        padding: 0.75rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .checklist-icon {
+        align-self: flex-start;
+    }
 }
 
 @media (max-width: 480px) {
+    .container {
+        padding: 0.75rem;
+    }
+    
+    .title {
+        font-size: 1.75rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .search-box {
+        padding: 0.75rem 2.5rem 0.75rem 2.5rem;
+    }
+    
+    .filter-tabs {
+        gap: 0.25rem;
+        flex-wrap: wrap;
+    }
+    
+    .filter-tab {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+        min-width: 60px;
+        flex: 1;
+        text-align: center;
+    }
+    
     .card {
         padding: 1.5rem;
+        min-height: 260px;
+    }
+    
+    .card-title {
+        font-size: 1.25rem;
+    }
+    
+    .card-subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .card-description {
+        font-size: 0.9rem;
     }
     
     .card-properties {
         grid-template-columns: 1fr;
     }
     
+    .tag {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+    }
+    
     .modal-header {
-        padding: 1.5rem 1.5rem 1rem;
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
     }
     
     .modal-header h2 {
+        font-size: 1.25rem;
+        margin-bottom: 0;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    
+    .framework-header {
+        gap: 0.5rem;
+    }
+    
+    .framework-header h3 {
+        font-size: 1.1rem;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .framework-tab {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+        gap: 0.25rem;
+    }
+    
+    .framework-tab i {
+        font-size: 0.8rem;
+    }
+    
+    .modal-section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .modal-section h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .formula {
+        font-size: 0.9rem;
+        padding: 1rem;
+    }
+    
+    .code-block pre {
+        font-size: 0.75rem;
+        line-height: 1.3;
+        padding: 0.75rem;
+    }
+    
+    .copy-btn {
+        top: 0.5rem;
+        right: 0.5rem;
+        padding: 0.4rem;
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@media (max-width: 360px) {
+    .title {
         font-size: 1.5rem;
+    }
+    
+    .search-box {
+        padding: 0.6rem 2rem 0.6rem 2rem;
+    }
+    
+    .search-icon, .clear-btn {
+        font-size: 0.9rem;
+    }
+    
+    .filter-tabs {
+        gap: 0.2rem;
+    }
+    
+    .filter-tab {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.75rem;
+        min-width: 50px;
+    }
+    
+    .framework-tab {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+        gap: 0.2rem;
+    }
+    
+    .framework-tab i {
+        font-size: 0.75rem;
+    }
+    
+    .card {
+        padding: 1.25rem;
+        min-height: 240px;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    .modal-content {
+        width: 98%;
+        margin: 0.5rem;
+        max-height: 98vh;
+    }
+    
+    .modal-body {
+        padding: 0.75rem;
+    }
+    
+    .modal-header {
+        padding: 0.75rem;
+    }
+    
+    .modal-header h2 {
+        font-size: 1.1rem;
+        padding-right: 2rem;
+    }
+    
+    .modal-close {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
+    
+    .code-block pre {
+        font-size: 0.7rem;
+        padding: 0.5rem;
+    }
+    
+    .copy-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+    
+    .checklist-item {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .property-card {
+        padding: 0.75rem;
+    }
+    
+    .property-label {
+        font-size: 0.7rem;
+    }
+    
+    .property-value {
+        font-size: 0.9rem;
     }
 }
 

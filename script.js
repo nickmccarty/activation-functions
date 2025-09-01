@@ -1272,68 +1272,6 @@ class VariationalEncoder(nn.Module):
         ]
     },
     {
-        id: 'softplus',
-        name: 'Softplus',
-        fullName: 'Soft Plus',
-        description: 'Smooth approximation of ReLU that\'s always positive, useful for variance parameters in probabilistic models.',
-        formula: 'f(x) = (1/β) * log(1 + e^(βx))',
-        category: 'smooth',
-        tags: ['smooth', 'positive', 'probabilistic'],
-        code: `import torch
-import torch.nn as nn
-
-# Method 1: Using nn.Softplus()
-softplus = nn.Softplus(beta=1, threshold=20)
-x = torch.tensor([-2.0, -1.0, 0.0, 1.0, 2.0])
-output = softplus(x)
-print(output)  # tensor([0.1269, 0.3133, 0.6931, 1.3133, 2.1269])
-
-# Method 2: Using functional interface
-import torch.nn.functional as F
-output = F.softplus(x, beta=1, threshold=20)
-
-# Common use in VAEs for variance
-class VariationalEncoder(nn.Module):
-    def __init__(self, input_dim, latent_dim):
-        super().__init__()
-        self.linear = nn.Linear(input_dim, latent_dim * 2)
-        self.softplus = nn.Softplus()
-    
-    def forward(self, x):
-        h = self.linear(x)
-        mu, log_var = h.chunk(2, dim=-1)
-        var = self.softplus(log_var)
-        return mu, var`,
-        properties: {
-            'Output Range': '(0, ∞)',
-            'Smoothness': 'Smooth',
-            'Monotonic': 'Yes',
-            'Zero-centered': 'No'
-        },
-        checklist: [
-            {
-                icon: 'fas fa-wave-square',
-                title: 'Smooth ReLU alternative',
-                description: 'Provides smooth gradients everywhere, no dead neurons'
-            },
-            {
-                icon: 'fas fa-plus',
-                title: 'Always positive',
-                description: 'Perfect for parameters that must be positive (e.g., variance)'
-            },
-            {
-                icon: 'fas fa-chart-line',
-                title: 'Good for probabilistic models',
-                description: 'Natural choice for positive constraints in VAEs, GANs'
-            },
-            {
-                icon: 'fas fa-calculator',
-                title: 'More expensive than ReLU',
-                description: 'Logarithm and exponential make it computationally costly'
-            }
-        ]
-    },
-    {
         id: 'softshrink',
         name: 'Softshrink',
         fullName: 'Soft Shrinkage Function',
@@ -1894,6 +1832,69 @@ masked_output, _ = multihead_attn(query, key, value, attn_mask=attn_mask)`,
                 icon: 'fas fa-memory',
                 title: 'Memory intensive',
                 description: 'Quadratic memory complexity in sequence length'
+            }
+        ]
+    },
+    {
+        id: 'silu',
+        name: 'SiLU',
+        fullName: 'Sigmoid Linear Unit',
+        description: 'Standalone SiLU activation, identical to Swish but with separate PyTorch implementation.',
+        formula: 'f(x) = x * σ(x) = x / (1 + e^(-x))',
+        category: 'advanced',
+        tags: ['smooth', 'self-gating', 'swish-equivalent'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.SiLU() (recommended)
+silu = nn.SiLU()
+x = torch.tensor([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = silu(x)
+print(output)  # tensor([-0.2384, -0.2689, 0.0000, 0.7311, 1.7616])
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.silu(x)
+
+# Note: SiLU and Swish are mathematically identical
+# SiLU is the official PyTorch name for this activation
+
+# Example usage
+class SiLUNet(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.linear1 = nn.Linear(input_size, hidden_size)
+        self.silu = nn.SiLU()
+        self.linear2 = nn.Linear(hidden_size, 1)
+    
+    def forward(self, x):
+        return self.linear2(self.silu(self.linear1(x)))`,
+        properties: {
+            'Output Range': '(-∞, ∞)',
+            'Smoothness': 'Smooth',
+            'Monotonic': 'Yes',
+            'Zero-centered': 'No'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-wave-square',
+                title: 'Smooth everywhere',
+                description: 'Differentiable across entire input range'
+            },
+            {
+                icon: 'fas fa-door-open',
+                title: 'Self-gating property',
+                description: 'Acts as its own gate through sigmoid multiplication'
+            },
+            {
+                icon: 'fas fa-star',
+                title: 'Official PyTorch name',
+                description: 'Preferred name over Swish in PyTorch ecosystem'
+            },
+            {
+                icon: 'fas fa-robot',
+                title: 'Modern architectures',
+                description: 'Used in many state-of-the-art models'
             }
         ]
     }

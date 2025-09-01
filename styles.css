@@ -158,6 +158,56 @@ body {
         inset -4px -4px 8px rgba(255,255,255,0.1);
 }
 
+.framework-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.framework-tabs {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.framework-tab {
+    background: var(--surface-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-small);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 
+        4px 4px 8px var(--shadow-dark),
+        -4px -4px 8px var(--shadow-light);
+}
+
+.framework-tab:hover {
+    transform: translateY(-1px);
+    box-shadow: 
+        6px 6px 12px var(--shadow-dark),
+        -6px -6px 12px var(--shadow-light);
+}
+
+.framework-tab.active {
+    background: var(--accent-color);
+    color: white;
+    box-shadow: 
+        inset 2px 2px 4px rgba(0,0,0,0.2),
+        inset -2px -2px 4px rgba(255,255,255,0.1);
+}
+
+.framework-tab i {
+    font-size: 1rem;
+}
+
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -346,6 +396,54 @@ body {
     font-weight: 600;
     margin-bottom: 1rem;
     color: var(--text-primary);
+}
+
+.framework-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.framework-tabs {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.framework-tab {
+    background: var(--surface-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-small);
+    font-family: inherit;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    box-shadow: 
+        4px 4px 8px var(--shadow-dark),
+        -4px -4px 8px var(--shadow-light);
+}
+
+.framework-tab:hover {
+    color: var(--accent-color);
+    transform: translateY(-1px);
+}
+
+.framework-tab.active {
+    background: var(--accent-color);
+    color: white;
+    box-shadow: 
+        inset 3px 3px 6px rgba(0,0,0,0.2),
+        inset -3px -3px 6px rgba(255,255,255,0.1);
+}
+
+.framework-tab i {
+    font-size: 1rem;
 }
 
 .formula {

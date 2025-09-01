@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyTorch Activation Functions Explorer</title>
+    <title>Neural Network Activation Functions Explorer - PyTorch & TensorFlow</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -11,8 +11,8 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1 class="title">PyTorch Activation Functions</h1>
-            <p class="subtitle">Explore and compare neural network activation functions</p>
+            <h1 class="title">Neural Network Activation Functions</h1>
+            <p class="subtitle">Explore PyTorch & TensorFlow implementations with interactive examples</p>
         </header>
         
         <div class="search-container">
@@ -63,7 +63,19 @@
                 </div>
                 
                 <div class="modal-section">
-                    <h3>PyTorch Implementation</h3>
+                    <div class="framework-header">
+                        <h3>Implementation</h3>
+                        <div class="framework-tabs">
+                            <button class="framework-tab active" data-framework="pytorch">
+                                <i class="fab fa-python"></i>
+                                PyTorch
+                            </button>
+                            <button class="framework-tab" data-framework="tensorflow">
+                                <i class="fab fa-google"></i>
+                                TensorFlow
+                            </button>
+                        </div>
+                    </div>
                     <div class="code-block">
                         <button class="copy-btn" id="copyCode">
                             <i class="fas fa-copy"></i>

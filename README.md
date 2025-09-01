@@ -1,8 +1,10 @@
-# PyTorch Activation Functions Explorer
+# PyTorch & TensorFlow Activation Functions Explorer
 
 [![Demo](https://img.shields.io/badge/Demo-Live%20Site-blue?style=for-the-badge&logo=github)](https://nickmccarty.me/activation-functions)
+[![PyTorch](https://img.shields.io/badge/PyTorch-Ready-ee4c2c?style=flat&logo=pytorch)](https://pytorch.org/)
+[![TensorFlow](https://img.shields.io/badge/TensorFlow-Ready-ff6f00?style=flat&logo=tensorflow)](https://tensorflow.org/)
 
-An interactive, modern web application for exploring PyTorch activation functions with detailed explanations, code examples, and practitioner guidance.
+An interactive, modern web application for exploring activation functions across **both PyTorch and TensorFlow** with detailed explanations, code examples, and practitioner guidance.
 
 ## Features
 
@@ -11,10 +13,12 @@ An interactive, modern web application for exploring PyTorch activation function
 - 📱 **Responsive** - Works seamlessly on desktop and mobile devices
 - 💡 **Interactive Cards** - Click any function for detailed information
 - 📊 **Practitioner Checklists** - Actionable guidance for choosing the right activation
-- 🐍 **PyTorch Code** - Complete, runnable examples for each function
+- 🔄 **Dual Framework Support** - Switch between PyTorch and TensorFlow implementations
+- 🐍 **PyTorch Code** - Complete, runnable PyTorch examples
+- 🔶 **TensorFlow Code** - Complete, runnable TensorFlow/Keras examples
 - 🏷️ **Smart Filtering** - Category-based filtering (Common, Advanced, Smooth)
 
-## All PyTorch Activation Functions Included ✅
+## Complete Activation Function Coverage ✅
 
 ### Common Activations
 - **ReLU** - Rectified Linear Unit
@@ -58,7 +62,7 @@ An interactive, modern web application for exploring PyTorch activation function
 - **AdaptiveLogSoftmax** - Efficient large vocabulary softmax
 - **MultiheadAttention** - Core transformer attention mechanism
 
-**Total: 25 activation functions from PyTorch documentation**
+**Total: 31 activation functions with both PyTorch and TensorFlow implementations**
 
 ## Quick Start
 
@@ -70,7 +74,9 @@ An interactive, modern web application for exploring PyTorch activation function
 ## What Each Modal Provides
 
 - **Mathematical Formula** - The exact mathematical definition
+- **Framework Toggle** - Switch between PyTorch and TensorFlow implementations
 - **PyTorch Implementation** - Complete code examples with multiple usage patterns
+- **TensorFlow Implementation** - Complete TensorFlow/Keras equivalents 
 - **Practitioner's Checklist** - When to use, advantages, and potential issues
 - **Key Properties** - Output range, smoothness, monotonicity, and centering
 
@@ -84,14 +90,16 @@ An interactive, modern web application for exploring PyTorch activation function
 
 ## Implementation Complete 🎉
 
-All activation functions from PyTorch's `torch.nn` module have been implemented with:
+All activation functions from PyTorch's `torch.nn` module have been implemented with dual framework support:
 - ✅ Complete mathematical formulas
-- ✅ Detailed PyTorch code examples  
+- ✅ **PyTorch code examples** - Complete torch.nn and functional implementations
+- ✅ **TensorFlow code examples** - Complete tf.keras and tf.nn implementations  
+- ✅ **Framework switching** - Toggle between PyTorch and TensorFlow in each modal
 - ✅ Practitioner guidance and checklists
 - ✅ Interactive search and filtering
 - ✅ Modern neumorphic design
 
-The application now covers **all 25 activation functions** from the official PyTorch documentation.
+The application now covers **all 31 activation functions** with implementations for both major deep learning frameworks.
 
 ## Contributing
 

@@ -7,7 +7,7 @@ const activationFunctions = [
         formula: 'f(x) = max(0, x)',
         category: 'common',
         tags: ['fast', 'simple', 'gradient-friendly'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.ReLU()
@@ -22,6 +22,34 @@ output = F.relu(x)
 
 # Method 3: Using inplace operation
 relu_inplace = nn.ReLU(inplace=True)`,
+        tensorflow_code: `import tensorflow as tf
+import numpy as np
+
+# Method 1: Using tf.keras.activations.relu
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.relu(x)
+print(output)  # tf.Tensor([0. 0. 0. 1. 2.], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.relu
+output = tf.nn.relu(x)
+
+# Method 3: As layer activation
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='relu'),
+    # or equivalently:
+    # tf.keras.layers.Dense(64, activation=tf.keras.activations.relu)
+])
+
+# Method 4: As separate layer
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64),
+    tf.keras.layers.ReLU()
+])
+
+# Method 5: Custom layer with ReLU
+class CustomLayer(tf.keras.layers.Layer):
+    def call(self, inputs):
+        return tf.nn.relu(inputs)`,
         properties: {
             'Output Range': '[0, ∞)',
             'Smoothness': 'Non-smooth',
@@ -59,7 +87,7 @@ relu_inplace = nn.ReLU(inplace=True)`,
         formula: 'f(x) = 1 / (1 + e^(-x))',
         category: 'common',
         tags: ['probability', 'smooth', 'saturating'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Sigmoid()
@@ -81,6 +109,29 @@ class BinaryClassifier(nn.Module):
     
     def forward(self, x):
         return self.sigmoid(self.linear(x))`,
+        tensorflow_code: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.sigmoid
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.sigmoid(x)
+print(output)  # tf.Tensor([0.1192 0.2689 0.5000 0.7311 0.8808], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.sigmoid
+output = tf.nn.sigmoid(x)
+
+# Method 3: As layer activation
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='sigmoid')
+])
+
+# Method 4: Binary classification example
+class BinaryClassifier(tf.keras.Model):
+    def __init__(self, input_size):
+        super().__init__()
+        self.dense = tf.keras.layers.Dense(1, activation='sigmoid')
+    
+    def call(self, x):
+        return self.dense(x)`,
         properties: {
             'Output Range': '[0, 1]',
             'Smoothness': 'Smooth',
@@ -118,7 +169,7 @@ class BinaryClassifier(nn.Module):
         formula: 'f(x) = (e^x - e^(-x)) / (e^x + e^(-x))',
         category: 'common',
         tags: ['zero-centered', 'smooth', 'saturating'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Tanh()
@@ -142,6 +193,30 @@ class SimpleRNN(nn.Module):
     
     def forward(self, x, hidden):
         return self.tanh(self.i2h(x) + self.h2h(hidden))`,
+        tensorflow_code: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.tanh
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.tanh(x)
+print(output)  # tf.Tensor([-0.964 -0.7616 0. 0.7616 0.964], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.tanh
+output = tf.nn.tanh(x)
+
+# Method 3: As layer activation
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='tanh')
+])
+
+# Method 4: RNN example with tanh
+class SimpleRNN(tf.keras.Model):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.i2h = tf.keras.layers.Dense(hidden_size)
+        self.h2h = tf.keras.layers.Dense(hidden_size, use_bias=False)
+    
+    def call(self, x, hidden):
+        return tf.nn.tanh(self.i2h(x) + self.h2h(hidden))`,
         properties: {
             'Output Range': '[-1, 1]',
             'Smoothness': 'Smooth',
@@ -179,7 +254,7 @@ class SimpleRNN(nn.Module):
         formula: 'f(x) = max(αx, x) where α = 0.01',
         category: 'common',
         tags: ['gradient-friendly', 'non-zero-negative'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.LeakyReLU()
@@ -194,6 +269,26 @@ output = F.leaky_relu(x, negative_slope=0.01)
 
 # Custom negative slope
 leaky_relu_custom = nn.LeakyReLU(negative_slope=0.1)
+output_custom = leaky_relu_custom(x)`,
+        tensorflow_code: `import tensorflow as tf
+
+# Method 1: Using tf.keras.layers.LeakyReLU
+leaky_relu = tf.keras.layers.LeakyReLU(alpha=0.01)
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = leaky_relu(x)
+print(output)  # tf.Tensor([-0.02 -0.01 0. 1. 2.], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.leaky_relu
+output = tf.nn.leaky_relu(x, alpha=0.01)
+
+# Method 3: As layer in model
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64),
+    tf.keras.layers.LeakyReLU(alpha=0.01)
+])
+
+# Method 4: Custom negative slope
+leaky_relu_custom = tf.keras.layers.LeakyReLU(alpha=0.1)
 output_custom = leaky_relu_custom(x)`,
         properties: {
             'Output Range': '(-∞, ∞)',
@@ -232,7 +327,7 @@ output_custom = leaky_relu_custom(x)`,
         formula: 'f(x) = x * Φ(x) ≈ 0.5x(1 + tanh(√(2/π)(x + 0.044715x³)))',
         category: 'advanced',
         tags: ['smooth', 'transformer', 'probabilistic'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.GELU()
@@ -256,6 +351,31 @@ class TransformerBlock(nn.Module):
     
     def forward(self, x):
         return self.linear2(self.dropout(self.gelu(self.linear1(x))))`,
+        tensorflow_code: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.gelu
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.gelu(x)
+print(output)  # tf.Tensor([-0.0454 -0.1587 0. 0.8413 1.9545], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.gelu
+output = tf.nn.gelu(x)
+
+# Method 3: As activation in Dense layer
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(128, activation='gelu')
+])
+
+# Method 4: Transformer block example
+class TransformerBlock(tf.keras.layers.Layer):
+    def __init__(self, d_model, d_ff, dropout_rate=0.1):
+        super().__init__()
+        self.linear1 = tf.keras.layers.Dense(d_ff, activation='gelu')
+        self.linear2 = tf.keras.layers.Dense(d_model)
+        self.dropout = tf.keras.layers.Dropout(dropout_rate)
+    
+    def call(self, x, training=None):
+        return self.linear2(self.dropout(self.linear1(x), training=training))`,
         properties: {
             'Output Range': '(-∞, ∞)',
             'Smoothness': 'Smooth',
@@ -293,7 +413,7 @@ class TransformerBlock(nn.Module):
         formula: 'f(x) = x if x > 0, α(e^x - 1) if x ≤ 0',
         category: 'advanced',
         tags: ['smooth', 'negative-saturation', 'bias-reducing'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.ELU()
@@ -308,6 +428,26 @@ output = F.elu(x, alpha=1.0)
 
 # Custom alpha parameter
 elu_custom = nn.ELU(alpha=1.5)
+output_custom = elu_custom(x)`,
+        tensorflow_code: `import tensorflow as tf
+
+# Method 1: Using tf.keras.layers.ELU
+elu = tf.keras.layers.ELU(alpha=1.0)
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = elu(x)
+print(output)  # tf.Tensor([-0.8647 -0.6321 0. 1. 2.], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.elu
+output = tf.nn.elu(x)
+
+# Method 3: As layer activation
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64),
+    tf.keras.layers.ELU(alpha=1.0)
+])
+
+# Method 4: Custom alpha parameter
+elu_custom = tf.keras.layers.ELU(alpha=1.5)
 output_custom = elu_custom(x)`,
         properties: {
             'Output Range': '(-α, ∞)',
@@ -346,7 +486,7 @@ output_custom = elu_custom(x)`,
         formula: 'f(x) = λ * ELU(x) where λ ≈ 1.0507',
         category: 'advanced',
         tags: ['self-normalizing', 'theoretical', 'deep-networks'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.SELU()
@@ -373,6 +513,37 @@ class SELUNet(nn.Module):
         )
     
     def forward(self, x):
+        return self.layers(x)`,
+        tensorflow_code: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.selu
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.selu(x)
+print(output)  # tf.Tensor([-0.9088 -0.664 0. 1.0507 2.1014], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.selu
+output = tf.nn.selu(x)
+
+# Method 3: As activation function
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='selu')
+])
+
+# Method 4: SELU network with proper dropout
+class SELUNet(tf.keras.Model):
+    def __init__(self, input_size, hidden_size, num_classes):
+        super().__init__()
+        # Use lecun_normal initialization for SELU
+        self.layers = tf.keras.Sequential([
+            tf.keras.layers.Dense(hidden_size, activation='selu',
+                                kernel_initializer='lecun_normal'),
+            tf.keras.layers.AlphaDropout(0.1),  # Use AlphaDropout with SELU
+            tf.keras.layers.Dense(hidden_size, activation='selu',
+                                kernel_initializer='lecun_normal'),
+            tf.keras.layers.Dense(num_classes)
+        ])
+    
+    def call(self, x):
         return self.layers(x)`,
         properties: {
             'Output Range': '(-λα, ∞)',
@@ -411,7 +582,7 @@ class SELUNet(nn.Module):
         formula: 'f(x) = (X * W + b) ⊗ σ(X * V + c)',
         category: 'advanced',
         tags: ['gating', 'language-models', 'attention'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.GLU()
@@ -471,7 +642,7 @@ class GLUFeedForward(nn.Module):
         formula: 'f(x) = max(αx, x) where α is learnable',
         category: 'advanced',
         tags: ['learnable', 'gradient-friendly', 'adaptive'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.PReLU()
@@ -497,6 +668,29 @@ class PReLUNet(nn.Module):
         x = self.prelu1(self.linear1(x))
         x = self.prelu2(self.linear2(x))
         return x`,
+        tensorflow_code: `import tensorflow as tf
+
+# Method 1: Using tf.keras.layers.PReLU()
+prelu = tf.keras.layers.PReLU()
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+# Note: PReLU needs to be called within a model
+model = tf.keras.Sequential([prelu])
+output = model(x)
+print(f"Output: {output}")
+
+# Method 2: Channel-wise PReLU
+prelu_channelwise = tf.keras.layers.PReLU(
+    shared_axes=[1, 2]  # Share across height and width for conv layers
+)
+
+# Example network
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64),
+    tf.keras.layers.PReLU(),
+    tf.keras.layers.Dense(32),
+    tf.keras.layers.PReLU(),
+    tf.keras.layers.Dense(1)
+])`,
         properties: {
             'Output Range': '(-∞, ∞)',
             'Smoothness': 'Non-smooth',
@@ -534,7 +728,7 @@ class PReLUNet(nn.Module):
         formula: 'f(x) = x * σ(x) = x / (1 + e^(-x))',
         category: 'advanced',
         tags: ['smooth', 'modern', 'self-gating'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.SiLU() (PyTorch's implementation)
@@ -561,6 +755,34 @@ class ModernBlock(nn.Module):
     
     def forward(self, x):
         return self.norm(self.silu(self.linear(x)))`,
+        tensorflow_code: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.swish
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.swish(x)
+print(output)  # tf.Tensor([-0.2384 -0.2689 0. 0.7311 1.7616], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.swish
+output = tf.nn.swish(x)
+
+# Method 3: Manual implementation
+def swish_custom(x):
+    return x * tf.keras.activations.sigmoid(x)
+
+# Method 4: As activation function
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='swish')
+])
+
+# Method 5: In modern architectures
+class ModernBlock(tf.keras.layers.Layer):
+    def __init__(self, dim):
+        super().__init__()
+        self.dense = tf.keras.layers.Dense(dim, activation='swish')
+        self.norm = tf.keras.layers.LayerNormalization()
+    
+    def call(self, x):
+        return self.norm(self.dense(x))`,
         properties: {
             'Output Range': '(-∞, ∞)',
             'Smoothness': 'Smooth',
@@ -598,7 +820,7 @@ class ModernBlock(nn.Module):
         formula: 'f(x) = x * tanh(softplus(x)) = x * tanh(ln(1 + e^x))',
         category: 'advanced',
         tags: ['smooth', 'self-regularizing', 'unbounded'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Mish()
@@ -668,7 +890,7 @@ class MishCNN(nn.Module):
         formula: 'f(x_i) = e^(x_i) / Σ(e^(x_j)) for j=1 to K',
         category: 'common',
         tags: ['probability', 'multiclass', 'normalization'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Softmax()
@@ -693,6 +915,35 @@ class Classifier(nn.Module):
         # Apply softmax only for inference, not during training
         if not self.training:
             return F.softmax(logits, dim=-1)
+        return logits`,
+        tensorflow_code: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.softmax
+x = tf.constant([[1.0, 2.0, 3.0], [1.0, 5.0, 1.0]])
+output = tf.keras.activations.softmax(x)
+print(output)  # Each row sums to 1.0
+
+# Method 2: Using tf.nn.softmax
+output = tf.nn.softmax(x, axis=-1)
+
+# Method 3: As activation in Dense layer
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(10, activation='softmax')
+])
+
+# Method 4: Classification example
+class Classifier(tf.keras.Model):
+    def __init__(self, input_size, num_classes):
+        super().__init__()
+        # Don't use softmax if using sparse_categorical_crossentropy
+        self.dense = tf.keras.layers.Dense(num_classes)
+        self.softmax = tf.keras.layers.Softmax()
+    
+    def call(self, x, training=None):
+        logits = self.dense(x)
+        # Apply softmax only for inference
+        if not training:
+            return self.softmax(logits)
         return logits`,
         properties: {
             'Output Range': '[0, 1]',
@@ -731,7 +982,7 @@ class Classifier(nn.Module):
         formula: 'f(x) = x * ReLU6(x + 3) / 6',
         category: 'advanced',
         tags: ['efficient', 'mobile', 'approximation'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Hardswish()
@@ -795,7 +1046,7 @@ class MobileBlock(nn.Module):
         formula: 'f(x) = max(0, x) + min(0, α(e^(x/α) - 1))',
         category: 'advanced',
         tags: ['smooth', 'differentiable', 'ELU-variant'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.CELU()
@@ -848,7 +1099,7 @@ output_custom = celu_custom(x)`,
         formula: 'f(x) = x if |x| > λ, 0 otherwise',
         category: 'advanced',
         tags: ['sparsity', 'thresholding', 'regularization'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Hardshrink()
@@ -907,7 +1158,7 @@ class SparseEncoder(nn.Module):
         formula: 'f(x) = max(0, min(1, (x + 3)/6))',
         category: 'advanced',
         tags: ['efficient', 'mobile', 'sigmoid-approximation'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Hardsigmoid()
@@ -967,7 +1218,7 @@ class MobileGate(nn.Module):
         formula: 'f(x) = max(min_val, min(max_val, x))',
         category: 'advanced',
         tags: ['efficient', 'bounded', 'tanh-approximation'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Hardtanh()
@@ -1030,7 +1281,7 @@ class EfficientRNN(nn.Module):
         formula: 'f(x) = log(1/(1 + e^(-x))) = log(sigmoid(x))',
         category: 'common',
         tags: ['numerically-stable', 'probability', 'log-space'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.LogSigmoid()
@@ -1093,7 +1344,7 @@ criterion = nn.NLLLoss()`,
         formula: 'f(x) = min(max(0, x), 6)',
         category: 'common',
         tags: ['bounded', 'mobile', 'quantization-friendly'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.ReLU6()
@@ -1153,7 +1404,7 @@ class MobileNetBlock(nn.Module):
         formula: 'f(x) = max(ax, x) where a ~ U(lower, upper)',
         category: 'advanced',
         tags: ['randomized', 'regularization', 'anti-overfitting'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.RReLU()
@@ -1216,7 +1467,7 @@ class RegularizedNet(nn.Module):
         formula: 'f(x) = (1/β) * log(1 + e^(βx))',
         category: 'smooth',
         tags: ['smooth', 'positive', 'probabilistic'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Softplus()
@@ -1279,7 +1530,7 @@ class VariationalEncoder(nn.Module):
         formula: 'f(x) = sign(x) * max(0, |x| - λ)',
         category: 'advanced',
         tags: ['sparsity', 'soft-thresholding', 'shrinkage'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Softshrink()
@@ -1338,7 +1589,7 @@ class SoftSparseLayer(nn.Module):
         formula: 'f(x) = x / (1 + |x|)',
         category: 'smooth',
         tags: ['polynomial', 'bounded', 'tanh-alternative'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Softsign()
@@ -1401,7 +1652,7 @@ class SoftsignNet(nn.Module):
         formula: 'f(x) = x - tanh(x)',
         category: 'advanced',
         tags: ['shrinkage', 'mathematical', 'specialized'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Tanhshrink()
@@ -1464,7 +1715,7 @@ class TanhshrinkLayer(nn.Module):
         formula: 'f(x) = x if x > threshold, value otherwise',
         category: 'advanced',
         tags: ['hard-threshold', 'binary', 'step-function'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Threshold()
@@ -1525,7 +1776,7 @@ class BinaryGate(nn.Module):
         formula: 'f(x_i) = x_i - log(Σ_j e^(x_j))',
         category: 'common',
         tags: ['numerically-stable', 'classification', 'log-probabilities'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.LogSoftmax()
@@ -1588,7 +1839,7 @@ criterion = nn.NLLLoss()`,
         formula: 'Applied per (h,w): softmax over channel dimension',
         category: 'advanced',
         tags: ['spatial', 'dense-prediction', 'segmentation'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Softmax2d()
@@ -1650,7 +1901,7 @@ class SegmentationHead(nn.Module):
         formula: 'f(x_i) = e^(-x_i) / Σ_j e^(-x_j)',
         category: 'advanced',
         tags: ['inverse-softmax', 'minimum-emphasis', 'attention'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.Softmin()
@@ -1716,7 +1967,7 @@ class DistanceAttention(nn.Module):
         formula: 'Hierarchical softmax with adaptive clustering',
         category: 'advanced',
         tags: ['large-vocabulary', 'efficient', 'hierarchical'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # AdaptiveLogSoftmaxWithLoss for large vocabularies
@@ -1778,7 +2029,7 @@ log_probs = adaptive_softmax.log_prob(input_tensor.view(-1, input_size))`,
         formula: 'MultiHead(Q,K,V) = Concat(head₁,...,headₕ)W^O',
         category: 'advanced',
         tags: ['attention', 'transformer', 'multi-head'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.MultiheadAttention()
@@ -1843,7 +2094,7 @@ masked_output, _ = multihead_attn(query, key, value, attn_mask=attn_mask)`,
         formula: 'f(x) = x * σ(x) = x / (1 + e^(-x))',
         category: 'advanced',
         tags: ['smooth', 'self-gating', 'swish-equivalent'],
-        code: `import torch
+        pytorch_code: `import torch
 import torch.nn as nn
 
 # Method 1: Using nn.SiLU() (recommended)
@@ -1906,6 +2157,7 @@ class ActivationExplorer {
         this.filteredFunctions = activationFunctions;
         this.currentFilter = 'all';
         this.searchTerm = '';
+        this.currentFramework = 'pytorch';
         
         this.initializeElements();
         this.setupEventListeners();
@@ -1920,6 +2172,7 @@ class ActivationExplorer {
         this.modalClose = document.getElementById('modalClose');
         this.noResults = document.getElementById('noResults');
         this.filterTabs = document.querySelectorAll('.filter-tab');
+        this.frameworkTabs = document.querySelectorAll('.framework-tab');
     }
     
     setupEventListeners() {
@@ -1959,6 +2212,13 @@ class ActivationExplorer {
             }
         });
         
+        this.frameworkTabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                this.setActiveFramework(e.target.dataset.framework);
+                this.updateModalCode();
+            });
+        });
+
         document.getElementById('copyCode').addEventListener('click', () => {
             const code = document.getElementById('modalCode').textContent;
             navigator.clipboard.writeText(code).then(() => {
@@ -1985,6 +2245,28 @@ class ActivationExplorer {
         this.filterTabs.forEach(tab => {
             tab.classList.toggle('active', tab.dataset.category === category);
         });
+    }
+
+    setActiveFramework(framework) {
+        this.currentFramework = framework;
+        this.frameworkTabs.forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.framework === framework);
+        });
+    }
+
+    updateModalCode() {
+        const func = this.currentModalFunction;
+        if (!func) return;
+
+        const codeKey = this.currentFramework === 'pytorch' ? 'pytorch_code' : 'tensorflow_code';
+        let code = func[codeKey];
+        
+        // If no TensorFlow code exists, use the mapping
+        if (!code && this.currentFramework === 'tensorflow') {
+            code = this.getTensorFlowCode(func.id);
+        }
+
+        document.getElementById('modalCode').textContent = code || 'Implementation not available';
     }
     
     filterAndRender() {
@@ -2039,14 +2321,549 @@ class ActivationExplorer {
         `).join('');
     }
     
+    getTensorFlowCode(functionId) {
+        const tensorflowCodes = {
+            relu: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.relu
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.relu(x)
+print(output)  # tf.Tensor([0. 0. 0. 1. 2.], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.relu
+output = tf.nn.relu(x)
+
+# Method 3: As layer activation
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='relu')
+])
+
+# Method 4: As separate layer
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64),
+    tf.keras.layers.ReLU()
+])`,
+
+            sigmoid: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.sigmoid
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.sigmoid(x)
+print(output)  # tf.Tensor([0.1192 0.2689 0.5000 0.7311 0.8808], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.sigmoid
+output = tf.nn.sigmoid(x)
+
+# Method 3: As layer activation
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+# Method 4: Binary classification
+class BinaryClassifier(tf.keras.Model):
+    def __init__(self, input_size):
+        super().__init__()
+        self.dense = tf.keras.layers.Dense(1, activation='sigmoid')
+    
+    def call(self, x):
+        return self.dense(x)`,
+
+            tanh: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.tanh
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.tanh(x)
+print(output)  # tf.Tensor([-0.964 -0.7616 0. 0.7616 0.964], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.tanh
+output = tf.nn.tanh(x)
+
+# Method 3: As layer activation
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='tanh')
+])
+
+# Method 4: RNN example
+class SimpleRNN(tf.keras.Model):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.i2h = tf.keras.layers.Dense(hidden_size)
+        self.h2h = tf.keras.layers.Dense(hidden_size, use_bias=False)
+    
+    def call(self, x, hidden):
+        return tf.nn.tanh(self.i2h(x) + self.h2h(hidden))`,
+
+            leakyrelu: `import tensorflow as tf
+
+# Method 1: Using tf.keras.layers.LeakyReLU
+leaky_relu = tf.keras.layers.LeakyReLU(alpha=0.01)
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = leaky_relu(x)
+print(output)  # tf.Tensor([-0.02 -0.01 0. 1. 2.], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.leaky_relu
+output = tf.nn.leaky_relu(x, alpha=0.01)
+
+# Method 3: As layer in model
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64),
+    tf.keras.layers.LeakyReLU(alpha=0.01)
+])`,
+
+            gelu: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.gelu
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.gelu(x)
+print(output)  # tf.Tensor([-0.0454 -0.1587 0. 0.8413 1.9545], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.gelu
+output = tf.nn.gelu(x)
+
+# Method 3: As activation in Dense layer
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(128, activation='gelu')
+])
+
+# Method 4: Transformer block
+class TransformerBlock(tf.keras.layers.Layer):
+    def __init__(self, d_model, d_ff):
+        super().__init__()
+        self.linear1 = tf.keras.layers.Dense(d_ff, activation='gelu')
+        self.linear2 = tf.keras.layers.Dense(d_model)
+        self.dropout = tf.keras.layers.Dropout(0.1)
+    
+    def call(self, x, training=None):
+        return self.linear2(self.dropout(self.linear1(x), training=training))`,
+
+            elu: `import tensorflow as tf
+
+# Method 1: Using tf.keras.layers.ELU
+elu = tf.keras.layers.ELU(alpha=1.0)
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = elu(x)
+print(output)  # tf.Tensor([-0.8647 -0.6321 0. 1. 2.], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.elu
+output = tf.nn.elu(x)
+
+# Method 3: As layer activation
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64),
+    tf.keras.layers.ELU(alpha=1.0)
+])`,
+
+            selu: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.selu
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.selu(x)
+print(output)  # tf.Tensor([-0.9088 -0.664 0. 1.0507 2.1014], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.selu
+output = tf.nn.selu(x)
+
+# Method 3: SELU network with proper initialization
+class SELUNet(tf.keras.Model):
+    def __init__(self, input_size, hidden_size, num_classes):
+        super().__init__()
+        self.layers = tf.keras.Sequential([
+            tf.keras.layers.Dense(hidden_size, activation='selu',
+                                kernel_initializer='lecun_normal'),
+            tf.keras.layers.AlphaDropout(0.1),
+            tf.keras.layers.Dense(num_classes)
+        ])
+    
+    def call(self, x):
+        return self.layers(x)`,
+
+            glu: `import tensorflow as tf
+
+# Custom GLU implementation (TensorFlow doesn't have native GLU)
+class GLU(tf.keras.layers.Layer):
+    def __init__(self, dim=-1):
+        super().__init__()
+        self.dim = dim
+    
+    def call(self, x):
+        a, b = tf.split(x, 2, axis=self.dim)
+        return a * tf.keras.activations.sigmoid(b)
+
+# Usage
+x = tf.random.normal((2, 8))  # Batch size 2, 8 features
+glu = GLU(dim=-1)
+output = glu(x)  # Output: (2, 4)
+
+# In feed-forward layer
+class GLUFeedForward(tf.keras.layers.Layer):
+    def __init__(self, d_model, d_ff):
+        super().__init__()
+        self.linear = tf.keras.layers.Dense(d_ff * 2)
+        self.glu = GLU(dim=-1)
+    
+    def call(self, x):
+        return self.glu(self.linear(x))`,
+
+            prelu: `import tensorflow as tf
+
+# Method 1: Using tf.keras.layers.PReLU
+prelu = tf.keras.layers.PReLU()
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = prelu(x)
+print(f"Output: {output}")
+print(f"Learned parameter: {prelu.alpha.numpy()}")
+
+# Method 2: Channel-wise parameters
+prelu_channelwise = tf.keras.layers.PReLU(shared_axes=None)
+
+# Method 3: Network example
+class PReLUNet(tf.keras.Model):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.dense1 = tf.keras.layers.Dense(hidden_size)
+        self.prelu1 = tf.keras.layers.PReLU()
+        self.dense2 = tf.keras.layers.Dense(hidden_size)
+        self.prelu2 = tf.keras.layers.PReLU()
+    
+    def call(self, x):
+        x = self.prelu1(self.dense1(x))
+        return self.prelu2(self.dense2(x))`,
+
+            swish: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.swish (SiLU in PyTorch)
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.swish(x)
+print(output)  # tf.Tensor([-0.2384 -0.2689 0. 0.7311 1.7616], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.swish
+output = tf.nn.swish(x)
+
+# Method 3: As activation function
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='swish')
+])
+
+# Method 4: Modern architecture
+class ModernBlock(tf.keras.layers.Layer):
+    def __init__(self, dim):
+        super().__init__()
+        self.dense = tf.keras.layers.Dense(dim, activation='swish')
+        self.norm = tf.keras.layers.LayerNormalization()
+    
+    def call(self, x):
+        return self.norm(self.dense(x))`,
+
+            silu: `import tensorflow as tf
+
+# Note: SiLU is called Swish in TensorFlow
+# Method 1: Using tf.keras.activations.swish
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.swish(x)  # SiLU = Swish
+print(output)  # tf.Tensor([-0.2384 -0.2689 0. 0.7311 1.7616], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.swish
+output = tf.nn.swish(x)
+
+# Method 3: Manual SiLU implementation
+def silu(x):
+    return x * tf.keras.activations.sigmoid(x)
+
+# Method 4: As activation function
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='swish')  # SiLU is 'swish' in TF
+])`,
+            
+            mish: `import tensorflow as tf
+
+# TensorFlow doesn't have native Mish, here's custom implementation
+def mish(x):
+    return x * tf.nn.tanh(tf.nn.softplus(x))
+
+class Mish(tf.keras.layers.Layer):
+    def call(self, x):
+        return x * tf.nn.tanh(tf.nn.softplus(x))
+
+# Usage
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+mish_layer = Mish()
+output = mish_layer(x)
+print(output)  # Custom implementation
+
+# In CNN
+class MishCNN(tf.keras.Model):
+    def __init__(self, num_classes=10):
+        super().__init__()
+        self.conv1 = tf.keras.layers.Conv2D(32, 3, padding='same')
+        self.mish1 = Mish()
+        self.conv2 = tf.keras.layers.Conv2D(64, 3, padding='same')
+        self.mish2 = Mish()
+        self.pool = tf.keras.layers.GlobalAveragePooling2D()
+        self.fc = tf.keras.layers.Dense(num_classes)
+    
+    def call(self, x):
+        x = self.mish1(self.conv1(x))
+        x = self.mish2(self.conv2(x))
+        x = self.pool(x)
+        return self.fc(x)`,
+
+            softmax: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.softmax
+x = tf.constant([[1.0, 2.0, 3.0], [1.0, 5.0, 1.0]])
+output = tf.keras.activations.softmax(x)
+print(output)  # Each row sums to 1.0
+
+# Method 2: Using tf.nn.softmax
+output = tf.nn.softmax(x, axis=-1)
+
+# Method 3: As activation in Dense layer
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(10, activation='softmax')
+])
+
+# Method 4: Classification model
+class Classifier(tf.keras.Model):
+    def __init__(self, num_classes):
+        super().__init__()
+        self.dense = tf.keras.layers.Dense(num_classes)
+        self.softmax = tf.keras.layers.Softmax()
+    
+    def call(self, x, training=None):
+        logits = self.dense(x)
+        if not training:
+            return self.softmax(logits)
+        return logits`,
+
+            hardswish: `import tensorflow as tf
+
+# Custom Hard Swish implementation
+def hard_swish(x):
+    return x * tf.nn.relu6(x + 3.0) / 6.0
+
+class HardSwish(tf.keras.layers.Layer):
+    def call(self, x):
+        return x * tf.nn.relu6(x + 3.0) / 6.0
+
+# Usage
+x = tf.constant([-4.0, -2.0, 0.0, 2.0, 4.0])
+hardswish_layer = HardSwish()
+output = hardswish_layer(x)
+
+# Mobile architecture example
+class MobileBlock(tf.keras.layers.Layer):
+    def __init__(self, out_channels):
+        super().__init__()
+        self.conv = tf.keras.layers.Conv2D(out_channels, 3, padding='same')
+        self.bn = tf.keras.layers.BatchNormalization()
+        self.hardswish = HardSwish()
+    
+    def call(self, x, training=None):
+        return self.hardswish(self.bn(self.conv(x), training=training))`,
+
+            multiheadattention: `import tensorflow as tf
+
+# Method 1: Using tf.keras.layers.MultiHeadAttention
+embed_dim = 512
+num_heads = 8
+mha = tf.keras.layers.MultiHeadAttention(
+    num_heads=num_heads,
+    key_dim=embed_dim // num_heads,
+    dropout=0.1
+)
+
+# Input tensors
+seq_len, batch_size = 20, 32
+query = tf.random.normal((batch_size, seq_len, embed_dim))
+key = tf.random.normal((batch_size, seq_len, embed_dim))
+value = tf.random.normal((batch_size, seq_len, embed_dim))
+
+# Forward pass
+attn_output = mha(query, key, value)
+
+# Self-attention
+self_attn_output = mha(query, query, query)
+
+# With attention mask
+attn_mask = tf.linalg.band_part(tf.ones((seq_len, seq_len)), -1, 0)
+masked_output = mha(query, key, value, attention_mask=attn_mask)
+
+# Transformer block
+class TransformerBlock(tf.keras.layers.Layer):
+    def __init__(self, embed_dim, num_heads, ff_dim):
+        super().__init__()
+        self.mha = tf.keras.layers.MultiHeadAttention(num_heads, embed_dim // num_heads)
+        self.ffn = tf.keras.Sequential([
+            tf.keras.layers.Dense(ff_dim, activation='relu'),
+            tf.keras.layers.Dense(embed_dim)
+        ])
+        self.layernorm1 = tf.keras.layers.LayerNormalization()
+        self.layernorm2 = tf.keras.layers.LayerNormalization()
+    
+    def call(self, x):
+        attn_output = self.mha(x, x, x)
+        out1 = self.layernorm1(x + attn_output)
+        ffn_output = self.ffn(out1)
+        return self.layernorm2(out1 + ffn_output)`,
+
+            logsigmoid: `import tensorflow as tf
+
+# Method 1: Using tf.nn.log_sigmoid
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.nn.log_sigmoid(x)
+print(output)  # tf.Tensor([-2.1269 -1.3133 -0.6931 -0.3133 -0.1269], shape=(5,), dtype=float32)
+
+# Method 2: Custom layer
+class LogSigmoid(tf.keras.layers.Layer):
+    def call(self, x):
+        return tf.nn.log_sigmoid(x)
+
+# Method 3: Binary classification with log probabilities
+class BinaryClassifierNLL(tf.keras.Model):
+    def __init__(self, input_size):
+        super().__init__()
+        self.dense = tf.keras.layers.Dense(1)
+    
+    def call(self, x):
+        logits = self.dense(x)
+        return tf.nn.log_sigmoid(logits)`,
+
+            relu6: `import tensorflow as tf
+
+# Method 1: Using tf.nn.relu6
+x = tf.constant([-2.0, 0.0, 3.0, 6.0, 8.0])
+output = tf.nn.relu6(x)
+print(output)  # tf.Tensor([0. 0. 3. 6. 6.], shape=(5,), dtype=float32)
+
+# Method 2: Using ReLU layer with max_value
+relu6_layer = tf.keras.layers.ReLU(max_value=6.0)
+output = relu6_layer(x)
+
+# Method 3: MobileNet block
+class MobileNetBlock(tf.keras.layers.Layer):
+    def __init__(self, out_channels):
+        super().__init__()
+        self.conv = tf.keras.layers.Conv2D(out_channels, 3, padding='same')
+        self.bn = tf.keras.layers.BatchNormalization()
+        self.relu6 = tf.keras.layers.ReLU(max_value=6.0)
+    
+    def call(self, x, training=None):
+        x = self.conv(x)
+        x = self.bn(x, training=training)
+        return self.relu6(x)`,
+
+            logsoftmax: `import tensorflow as tf
+
+# Method 1: Using tf.nn.log_softmax
+x = tf.constant([[1.0, 2.0, 3.0], [1.0, 5.0, 1.0]])
+output = tf.nn.log_softmax(x, axis=1)
+print(output)
+
+# Method 2: Classification with log softmax
+class ClassifierWithLogSoftmax(tf.keras.Model):
+    def __init__(self, num_classes):
+        super().__init__()
+        self.dense = tf.keras.layers.Dense(num_classes)
+    
+    def call(self, x):
+        logits = self.dense(x)
+        return tf.nn.log_softmax(logits, axis=1)
+
+# Use with sparse categorical crossentropy for numerical stability`,
+
+            softplus: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.softplus
+x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tf.keras.activations.softplus(x)
+print(output)  # tf.Tensor([0.1269 0.3133 0.6931 1.3133 2.1269], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.softplus
+output = tf.nn.softplus(x)
+
+# Method 3: In VAE for variance
+class VariationalEncoder(tf.keras.layers.Layer):
+    def __init__(self, input_dim, latent_dim):
+        super().__init__()
+        self.dense = tf.keras.layers.Dense(latent_dim * 2)
+    
+    def call(self, x):
+        h = self.dense(x)
+        mu, log_var = tf.split(h, 2, axis=-1)
+        var = tf.nn.softplus(log_var)  # Ensure positive
+        return mu, var`,
+
+            softsign: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.softsign
+x = tf.constant([-10.0, -1.0, 0.0, 1.0, 10.0])
+output = tf.keras.activations.softsign(x)
+print(output)  # tf.Tensor([-0.9091 -0.5 0. 0.5 0.9091], shape=(5,), dtype=float32)
+
+# Method 2: Using tf.nn.softsign
+output = tf.nn.softsign(x)
+
+# Method 3: Neural network example
+class SoftsignNet(tf.keras.Model):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.dense1 = tf.keras.layers.Dense(hidden_size, activation='softsign')
+        self.dense2 = tf.keras.layers.Dense(hidden_size, activation='softsign')
+    
+    def call(self, x):
+        x = self.dense1(x)
+        return self.dense2(x)`,
+
+            hardsigmoid: `import tensorflow as tf
+
+# Method 1: Using tf.keras.activations.hard_sigmoid
+x = tf.constant([-4.0, -1.0, 0.0, 1.0, 4.0])
+output = tf.keras.activations.hard_sigmoid(x)
+print(output)  # tf.Tensor([0. 0.3 0.5 0.7 1.], shape=(5,), dtype=float32)
+
+# Note: TensorFlow's hard_sigmoid uses (x + 1) / 2, PyTorch uses (x + 3) / 6
+# Method 2: PyTorch-compatible version
+def hard_sigmoid_pytorch(x):
+    return tf.clip_by_value((x + 3.0) / 6.0, 0.0, 1.0)
+
+# Method 3: Mobile gate example
+class MobileGate(tf.keras.layers.Layer):
+    def __init__(self, channels):
+        super().__init__()
+        self.conv = tf.keras.layers.Conv2D(channels, 1)
+    
+    def call(self, x):
+        gate = tf.keras.activations.hard_sigmoid(self.conv(x))
+        return x * gate`
+        };
+
+        return tensorflowCodes[functionId] || `# TensorFlow implementation for ${functionId} not yet available
+# Please check TensorFlow documentation for equivalent functions
+import tensorflow as tf
+
+# Most activation functions have direct equivalents:
+# - Use tf.keras.activations.function_name()
+# - Use tf.nn.function_name()
+# - Use as activation='function_name' in layers
+# - Create custom layers for unsupported functions
+
+# Example pattern:
+# x = tf.constant([-2.0, -1.0, 0.0, 1.0, 2.0])
+# output = tf.keras.activations.${functionId}(x)  # if available`;
+    }
+
     openModal(functionId) {
         const func = this.allFunctions.find(f => f.id === functionId);
         if (!func) return;
         
+        this.currentModalFunction = func;
+        
         document.getElementById('modalTitle').textContent = func.fullName;
         document.getElementById('modalDescription').textContent = func.description;
         document.getElementById('modalFormula').textContent = func.formula;
-        document.getElementById('modalCode').textContent = func.code;
+        
+        // Update code based on current framework
+        this.updateModalCode();
         
         const checklistHTML = func.checklist.map(item => `
             <div class="checklist-item">

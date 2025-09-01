@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyTorch Activation Functions Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">PyTorch Activation Functions</h1>
+            <p class="subtitle">Explore and compare neural network activation functions</p>
+        </header>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Search activation functions..." autocomplete="off">
+                <button id="clearSearch" class="clear-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-category="all">All</button>
+                <button class="filter-tab" data-category="common">Common</button>
+                <button class="filter-tab" data-category="advanced">Advanced</button>
+                <button class="filter-tab" data-category="smooth">Smooth</button>
+            </div>
+        </div>
+        
+        <div class="cards-grid" id="cardsGrid">
+            <!-- Cards will be populated by JavaScript -->
+        </div>
+        
+        <div id="noResults" class="no-results" style="display: none;">
+            <i class="fas fa-search"></i>
+            <h3>No activation functions found</h3>
+            <p>Try adjusting your search terms or filters</p>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h3>Description</h3>
+                    <p id="modalDescription"></p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>Mathematical Formula</h3>
+                    <div id="modalFormula" class="formula"></div>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>PyTorch Implementation</h3>
+                    <div class="code-block">
+                        <button class="copy-btn" id="copyCode">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <pre><code id="modalCode"></code></pre>
+                    </div>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>Practitioner's Checklist</h3>
+                    <div id="modalChecklist" class="checklist"></div>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>Properties</h3>
+                    <div id="modalProperties" class="properties-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

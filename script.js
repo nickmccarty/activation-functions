@@ -786,6 +786,1116 @@ class MobileBlock(nn.Module):
                 description: 'Uses only basic arithmetic operations'
             }
         ]
+    },
+    {
+        id: 'celu',
+        name: 'CELU',
+        fullName: 'Continuously Differentiable ELU',
+        description: 'A continuously differentiable variant of ELU that provides smooth gradients throughout the function domain.',
+        formula: 'f(x) = max(0, x) + min(0, α(e^(x/α) - 1))',
+        category: 'advanced',
+        tags: ['smooth', 'differentiable', 'ELU-variant'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.CELU()
+celu = nn.CELU(alpha=1.0)
+x = torch.tensor([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = celu(x)
+print(output)
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.celu(x, alpha=1.0)
+
+# Custom alpha parameter
+celu_custom = nn.CELU(alpha=0.5)
+output_custom = celu_custom(x)`,
+        properties: {
+            'Output Range': '(-α, ∞)',
+            'Smoothness': 'Smooth',
+            'Monotonic': 'Yes',
+            'Zero-centered': 'Nearly'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-wave-square',
+                title: 'Continuously differentiable',
+                description: 'Smooth gradients everywhere prevent optimization issues'
+            },
+            {
+                icon: 'fas fa-balance-scale',
+                title: 'Better than ELU',
+                description: 'Improved gradient flow compared to standard ELU'
+            },
+            {
+                icon: 'fas fa-calculator',
+                title: 'Computationally expensive',
+                description: 'Exponential calculation makes it slower than ReLU'
+            },
+            {
+                icon: 'fas fa-sliders-h',
+                title: 'Tunable parameter',
+                description: 'Alpha parameter allows customization of negative region'
+            }
+        ]
+    },
+    {
+        id: 'hardshrink',
+        name: 'Hardshrink',
+        fullName: 'Hard Shrinkage Function',
+        description: 'Zeros out values within a threshold range while preserving values outside, promoting sparsity.',
+        formula: 'f(x) = x if |x| > λ, 0 otherwise',
+        category: 'advanced',
+        tags: ['sparsity', 'thresholding', 'regularization'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.Hardshrink()
+hardshrink = nn.Hardshrink(lambd=0.5)
+x = torch.tensor([-2.0, -0.3, 0.0, 0.3, 2.0])
+output = hardshrink(x)
+print(output)  # tensor([-2.0000, 0.0000, 0.0000, 0.0000, 2.0000])
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.hardshrink(x, lambd=0.5)
+
+# Example in sparse coding
+class SparseEncoder(nn.Module):
+    def __init__(self, input_dim, hidden_dim, threshold=0.1):
+        super().__init__()
+        self.encoder = nn.Linear(input_dim, hidden_dim)
+        self.hardshrink = nn.Hardshrink(lambd=threshold)
+    
+    def forward(self, x):
+        return self.hardshrink(self.encoder(x))`,
+        properties: {
+            'Output Range': '(-∞, -λ] ∪ {0} ∪ [λ, ∞)',
+            'Smoothness': 'Non-smooth',
+            'Monotonic': 'Piecewise',
+            'Zero-centered': 'Yes'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-filter',
+                title: 'Promotes sparsity',
+                description: 'Zeros small values, creating sparse representations'
+            },
+            {
+                icon: 'fas fa-exclamation-triangle',
+                title: 'Non-differentiable',
+                description: 'Discontinuous at threshold points can affect gradients'
+            },
+            {
+                icon: 'fas fa-sliders-h',
+                title: 'Threshold parameter',
+                description: 'Lambda controls the sparsity level'
+            },
+            {
+                icon: 'fas fa-compress',
+                title: 'Feature selection',
+                description: 'Useful for automatic feature selection and denoising'
+            }
+        ]
+    },
+    {
+        id: 'hardsigmoid',
+        name: 'Hardsigmoid',
+        fullName: 'Hard Sigmoid',
+        description: 'Piecewise linear approximation of sigmoid that\'s computationally efficient for mobile devices.',
+        formula: 'f(x) = max(0, min(1, (x + 3)/6))',
+        category: 'advanced',
+        tags: ['efficient', 'mobile', 'sigmoid-approximation'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.Hardsigmoid()
+hardsigmoid = nn.Hardsigmoid()
+x = torch.tensor([-4.0, -1.0, 0.0, 1.0, 4.0])
+output = hardsigmoid(x)
+print(output)  # tensor([0.0000, 0.3333, 0.5000, 0.6667, 1.0000])
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.hardsigmoid(x)
+
+# Common use in mobile architectures
+class MobileGate(nn.Module):
+    def __init__(self, channels):
+        super().__init__()
+        self.conv = nn.Conv2d(channels, channels, 1)
+        self.hardsigmoid = nn.Hardsigmoid()
+    
+    def forward(self, x):
+        gate = self.hardsigmoid(self.conv(x))
+        return x * gate`,
+        properties: {
+            'Output Range': '[0, 1]',
+            'Smoothness': 'Piecewise linear',
+            'Monotonic': 'Yes',
+            'Zero-centered': 'No'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-mobile-alt',
+                title: 'Mobile optimized',
+                description: 'Much faster than sigmoid for mobile deployment'
+            },
+            {
+                icon: 'fas fa-chart-line',
+                title: 'Good approximation',
+                description: 'Closely approximates sigmoid in useful range'
+            },
+            {
+                icon: 'fas fa-door-open',
+                title: 'Perfect for gates',
+                description: 'Excellent choice for attention and gating mechanisms'
+            },
+            {
+                icon: 'fas fa-exclamation-triangle',
+                title: 'Limited expressiveness',
+                description: 'Linear approximation may hurt performance vs true sigmoid'
+            }
+        ]
+    },
+    {
+        id: 'hardtanh',
+        name: 'Hardtanh',
+        fullName: 'Hard Hyperbolic Tangent',
+        description: 'Piecewise linear approximation of tanh with configurable bounds, efficient for mobile deployment.',
+        formula: 'f(x) = max(min_val, min(max_val, x))',
+        category: 'advanced',
+        tags: ['efficient', 'bounded', 'tanh-approximation'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.Hardtanh()
+hardtanh = nn.Hardtanh(min_val=-1.0, max_val=1.0)
+x = torch.tensor([-3.0, -1.0, 0.0, 1.0, 3.0])
+output = hardtanh(x)
+print(output)  # tensor([-1., -1., 0., 1., 1.])
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.hardtanh(x, min_val=-1.0, max_val=1.0)
+
+# Custom bounds
+hardtanh_custom = nn.Hardtanh(min_val=-2.0, max_val=2.0)
+
+# Common use in RNNs
+class EfficientRNN(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.linear = nn.Linear(input_size + hidden_size, hidden_size)
+        self.hardtanh = nn.Hardtanh()
+    
+    def forward(self, x, hidden):
+        combined = torch.cat([x, hidden], dim=1)
+        return self.hardtanh(self.linear(combined))`,
+        properties: {
+            'Output Range': '[min_val, max_val]',
+            'Smoothness': 'Piecewise linear',
+            'Monotonic': 'Yes (in bounds)',
+            'Zero-centered': 'Yes'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-tachometer-alt',
+                title: 'Very fast computation',
+                description: 'Simple clipping operation, no exponentials'
+            },
+            {
+                icon: 'fas fa-balance-scale',
+                title: 'Zero-centered and bounded',
+                description: 'Combines benefits of bounded output with zero centering'
+            },
+            {
+                icon: 'fas fa-mobile-alt',
+                title: 'Mobile friendly',
+                description: 'Excellent for resource-constrained environments'
+            },
+            {
+                icon: 'fas fa-exclamation-triangle',
+                title: 'Saturates easily',
+                description: 'May limit gradient flow for large inputs'
+            }
+        ]
+    },
+    {
+        id: 'logsigmoid',
+        name: 'LogSigmoid',
+        fullName: 'Log Sigmoid',
+        description: 'Computes the logarithm of sigmoid in a numerically stable way, commonly used with NLL loss.',
+        formula: 'f(x) = log(1/(1 + e^(-x))) = log(sigmoid(x))',
+        category: 'common',
+        tags: ['numerically-stable', 'probability', 'log-space'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.LogSigmoid()
+logsigmoid = nn.LogSigmoid()
+x = torch.tensor([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = logsigmoid(x)
+print(output)  # tensor([-2.1269, -1.3133, -0.6931, -0.3133, -0.1269])
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.logsigmoid(x)
+
+# Common use with NLL loss
+class BinaryClassifierNLL(nn.Module):
+    def __init__(self, input_size):
+        super().__init__()
+        self.linear = nn.Linear(input_size, 1)
+        self.logsigmoid = nn.LogSigmoid()
+    
+    def forward(self, x):
+        logits = self.linear(x)
+        return self.logsigmoid(logits)
+        
+# Use with NLLLoss for binary classification
+criterion = nn.NLLLoss()`,
+        properties: {
+            'Output Range': '(-∞, 0]',
+            'Smoothness': 'Smooth',
+            'Monotonic': 'Yes',
+            'Zero-centered': 'No'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-calculator',
+                title: 'Numerically stable',
+                description: 'Avoids numerical issues when computing log(sigmoid(x))'
+            },
+            {
+                icon: 'fas fa-percentage',
+                title: 'Log probabilities',
+                description: 'Perfect for models requiring log probability outputs'
+            },
+            {
+                icon: 'fas fa-link',
+                title: 'Works with NLL loss',
+                description: 'Designed to work seamlessly with NLLLoss'
+            },
+            {
+                icon: 'fas fa-exclamation-triangle',
+                title: 'Always negative',
+                description: 'Outputs are always negative (log of values in [0,1])'
+            }
+        ]
+    },
+    {
+        id: 'relu6',
+        name: 'ReLU6',
+        fullName: 'ReLU Clamped at 6',
+        description: 'ReLU with upper bound at 6, preventing activation explosion while maintaining computational benefits.',
+        formula: 'f(x) = min(max(0, x), 6)',
+        category: 'common',
+        tags: ['bounded', 'mobile', 'quantization-friendly'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.ReLU6()
+relu6 = nn.ReLU6()
+x = torch.tensor([-2.0, 0.0, 3.0, 6.0, 8.0])
+output = relu6(x)
+print(output)  # tensor([0., 0., 3., 6., 6.])
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.relu6(x)
+
+# Common use in mobile networks (MobileNet)
+class MobileNetBlock(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.conv = nn.Conv2d(in_channels, out_channels, 3, padding=1)
+        self.bn = nn.BatchNorm2d(out_channels)
+        self.relu6 = nn.ReLU6()
+    
+    def forward(self, x):
+        return self.relu6(self.bn(self.conv(x)))`,
+        properties: {
+            'Output Range': '[0, 6]',
+            'Smoothness': 'Non-smooth',
+            'Monotonic': 'Yes (in range)',
+            'Zero-centered': 'No'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-mobile-alt',
+                title: 'Mobile optimized',
+                description: 'Designed specifically for mobile neural networks'
+            },
+            {
+                icon: 'fas fa-microchip',
+                title: 'Quantization friendly',
+                description: 'Bounded output works well with 8-bit quantization'
+            },
+            {
+                icon: 'fas fa-bolt',
+                title: 'Fast like ReLU',
+                description: 'Simple clamping operation with ReLU speed'
+            },
+            {
+                icon: 'fas fa-exclamation-triangle',
+                title: 'Can limit expressiveness',
+                description: 'Upper bound may constrain model capacity'
+            }
+        ]
+    },
+    {
+        id: 'rrelu',
+        name: 'RReLU',
+        fullName: 'Randomized Leaky ReLU',
+        description: 'LeakyReLU with random negative slope during training to reduce overfitting.',
+        formula: 'f(x) = max(ax, x) where a ~ U(lower, upper)',
+        category: 'advanced',
+        tags: ['randomized', 'regularization', 'anti-overfitting'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.RReLU()
+rrelu = nn.RReLU(lower=1./8, upper=1./3)
+x = torch.tensor([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = rrelu(x)
+print(output)  # Different each time in training mode
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.rrelu(x, lower=1./8, upper=1./3, training=True)
+
+# Example in regularized network
+class RegularizedNet(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.linear1 = nn.Linear(input_size, hidden_size)
+        self.rrelu1 = nn.RReLU(lower=0.1, upper=0.3)
+        self.linear2 = nn.Linear(hidden_size, hidden_size)
+        self.rrelu2 = nn.RReLU(lower=0.1, upper=0.3)
+    
+    def forward(self, x):
+        x = self.rrelu1(self.linear1(x))
+        x = self.rrelu2(self.linear2(x))
+        return x`,
+        properties: {
+            'Output Range': '(-∞, ∞)',
+            'Smoothness': 'Non-smooth',
+            'Monotonic': 'Yes',
+            'Zero-centered': 'No'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-dice',
+                title: 'Built-in regularization',
+                description: 'Random slope acts as regularization during training'
+            },
+            {
+                icon: 'fas fa-heartbeat',
+                title: 'Prevents dead neurons',
+                description: 'Non-zero gradient for negative inputs keeps neurons alive'
+            },
+            {
+                icon: 'fas fa-balance-scale',
+                title: 'Train/eval difference',
+                description: 'Uses random slope in training, fixed average in evaluation'
+            },
+            {
+                icon: 'fas fa-sliders-h',
+                title: 'Hyperparameter sensitive',
+                description: 'Lower and upper bounds need careful tuning'
+            }
+        ]
+    },
+    {
+        id: 'softplus',
+        name: 'Softplus',
+        fullName: 'Soft Plus',
+        description: 'Smooth approximation of ReLU that\'s always positive, useful for variance parameters in probabilistic models.',
+        formula: 'f(x) = (1/β) * log(1 + e^(βx))',
+        category: 'smooth',
+        tags: ['smooth', 'positive', 'probabilistic'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.Softplus()
+softplus = nn.Softplus(beta=1, threshold=20)
+x = torch.tensor([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = softplus(x)
+print(output)  # tensor([0.1269, 0.3133, 0.6931, 1.3133, 2.1269])
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.softplus(x, beta=1, threshold=20)
+
+# Common use in VAEs for variance
+class VariationalEncoder(nn.Module):
+    def __init__(self, input_dim, latent_dim):
+        super().__init__()
+        self.linear = nn.Linear(input_dim, latent_dim * 2)
+        self.softplus = nn.Softplus()
+    
+    def forward(self, x):
+        h = self.linear(x)
+        mu, log_var = h.chunk(2, dim=-1)
+        # Use softplus to ensure positive variance
+        var = self.softplus(log_var)
+        return mu, var`,
+        properties: {
+            'Output Range': '(0, ∞)',
+            'Smoothness': 'Smooth',
+            'Monotonic': 'Yes',
+            'Zero-centered': 'No'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-wave-square',
+                title: 'Smooth ReLU alternative',
+                description: 'Provides smooth gradients everywhere, no dead neurons'
+            },
+            {
+                icon: 'fas fa-plus',
+                title: 'Always positive',
+                description: 'Perfect for parameters that must be positive (e.g., variance)'
+            },
+            {
+                icon: 'fas fa-chart-line',
+                title: 'Good for probabilistic models',
+                description: 'Natural choice for positive constraints in VAEs, GANs'
+            },
+            {
+                icon: 'fas fa-calculator',
+                title: 'More expensive than ReLU',
+                description: 'Logarithm and exponential make it computationally costly'
+            }
+        ]
+    },
+    {
+        id: 'softplus',
+        name: 'Softplus',
+        fullName: 'Soft Plus',
+        description: 'Smooth approximation of ReLU that\'s always positive, useful for variance parameters in probabilistic models.',
+        formula: 'f(x) = (1/β) * log(1 + e^(βx))',
+        category: 'smooth',
+        tags: ['smooth', 'positive', 'probabilistic'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.Softplus()
+softplus = nn.Softplus(beta=1, threshold=20)
+x = torch.tensor([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = softplus(x)
+print(output)  # tensor([0.1269, 0.3133, 0.6931, 1.3133, 2.1269])
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.softplus(x, beta=1, threshold=20)
+
+# Common use in VAEs for variance
+class VariationalEncoder(nn.Module):
+    def __init__(self, input_dim, latent_dim):
+        super().__init__()
+        self.linear = nn.Linear(input_dim, latent_dim * 2)
+        self.softplus = nn.Softplus()
+    
+    def forward(self, x):
+        h = self.linear(x)
+        mu, log_var = h.chunk(2, dim=-1)
+        var = self.softplus(log_var)
+        return mu, var`,
+        properties: {
+            'Output Range': '(0, ∞)',
+            'Smoothness': 'Smooth',
+            'Monotonic': 'Yes',
+            'Zero-centered': 'No'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-wave-square',
+                title: 'Smooth ReLU alternative',
+                description: 'Provides smooth gradients everywhere, no dead neurons'
+            },
+            {
+                icon: 'fas fa-plus',
+                title: 'Always positive',
+                description: 'Perfect for parameters that must be positive (e.g., variance)'
+            },
+            {
+                icon: 'fas fa-chart-line',
+                title: 'Good for probabilistic models',
+                description: 'Natural choice for positive constraints in VAEs, GANs'
+            },
+            {
+                icon: 'fas fa-calculator',
+                title: 'More expensive than ReLU',
+                description: 'Logarithm and exponential make it computationally costly'
+            }
+        ]
+    },
+    {
+        id: 'softshrink',
+        name: 'Softshrink',
+        fullName: 'Soft Shrinkage Function',
+        description: 'Applies soft thresholding that shrinks values toward zero, promoting sparsity.',
+        formula: 'f(x) = sign(x) * max(0, |x| - λ)',
+        category: 'advanced',
+        tags: ['sparsity', 'soft-thresholding', 'shrinkage'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.Softshrink()
+softshrink = nn.Softshrink(lambd=0.5)
+x = torch.tensor([-2.0, -0.3, 0.0, 0.3, 2.0])
+output = softshrink(x)
+print(output)  # tensor([-1.5000, 0.0000, 0.0000, 0.0000, 1.5000])
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.softshrink(x, lambd=0.5)
+
+# Example in sparse representation learning
+class SoftSparseLayer(nn.Module):
+    def __init__(self, dim, threshold=0.1):
+        super().__init__()
+        self.linear = nn.Linear(dim, dim)
+        self.softshrink = nn.Softshrink(lambd=threshold)
+    
+    def forward(self, x):
+        return self.softshrink(self.linear(x))`,
+        properties: {
+            'Output Range': '(-∞, ∞)',
+            'Smoothness': 'Non-smooth',
+            'Monotonic': 'Piecewise',
+            'Zero-centered': 'Yes'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-compress',
+                title: 'Soft sparsity',
+                description: 'Gradually shrinks small values toward zero'
+            },
+            {
+                icon: 'fas fa-balance-scale',
+                title: 'Zero-centered',
+                description: 'Symmetric around zero, good for hidden layers'
+            },
+            {
+                icon: 'fas fa-exclamation-triangle',
+                title: 'Non-differentiable at ±λ',
+                description: 'Gradient issues at threshold points'
+            },
+            {
+                icon: 'fas fa-chart-line',
+                title: 'Feature selection',
+                description: 'Useful for automatic feature selection tasks'
+            }
+        ]
+    },
+    {
+        id: 'softsign',
+        name: 'Softsign',
+        fullName: 'Soft Sign Function',
+        description: 'Alternative to tanh with polynomial decay, bounded output without exponentials.',
+        formula: 'f(x) = x / (1 + |x|)',
+        category: 'smooth',
+        tags: ['polynomial', 'bounded', 'tanh-alternative'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.Softsign()
+softsign = nn.Softsign()
+x = torch.tensor([-10.0, -1.0, 0.0, 1.0, 10.0])
+output = softsign(x)
+print(output)  # tensor([-0.9091, -0.5000, 0.0000, 0.5000, 0.9091])
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.softsign(x)
+
+# Example in neural network
+class SoftsignNet(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.linear1 = nn.Linear(input_size, hidden_size)
+        self.softsign1 = nn.Softsign()
+        self.linear2 = nn.Linear(hidden_size, hidden_size)
+        self.softsign2 = nn.Softsign()
+    
+    def forward(self, x):
+        x = self.softsign1(self.linear1(x))
+        x = self.softsign2(self.linear2(x))
+        return x`,
+        properties: {
+            'Output Range': '(-1, 1)',
+            'Smoothness': 'Smooth (except at 0)',
+            'Monotonic': 'Yes',
+            'Zero-centered': 'Yes'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-balance-scale',
+                title: 'Zero-centered and bounded',
+                description: 'Good alternative to tanh without exponentials'
+            },
+            {
+                icon: 'fas fa-chart-line',
+                title: 'Slower saturation',
+                description: 'Polynomial decay saturates more slowly than tanh'
+            },
+            {
+                icon: 'fas fa-tachometer-alt',
+                title: 'No exponentials',
+                description: 'Computationally simpler than tanh'
+            },
+            {
+                icon: 'fas fa-question-circle',
+                title: 'Less common',
+                description: 'Limited research and practical usage compared to tanh'
+            }
+        ]
+    },
+    {
+        id: 'tanhshrink',
+        name: 'Tanhshrink',
+        fullName: 'Tanh Shrinkage',
+        description: 'Computes the difference between input and its tanh, creating unique shrinkage properties.',
+        formula: 'f(x) = x - tanh(x)',
+        category: 'advanced',
+        tags: ['shrinkage', 'mathematical', 'specialized'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.Tanhshrink()
+tanhshrink = nn.Tanhshrink()
+x = torch.tensor([-2.0, -1.0, 0.0, 1.0, 2.0])
+output = tanhshrink(x)
+print(output)  # tensor([-0.0360, -0.2384, 0.0000, 0.2384, 1.0360])
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.tanhshrink(x)
+
+# Manual implementation equivalent
+def tanhshrink_manual(x):
+    return x - torch.tanh(x)
+
+# Specialized usage example
+class TanhshrinkLayer(nn.Module):
+    def __init__(self, dim):
+        super().__init__()
+        self.linear = nn.Linear(dim, dim)
+        self.tanhshrink = nn.Tanhshrink()
+    
+    def forward(self, x):
+        return self.tanhshrink(self.linear(x))`,
+        properties: {
+            'Output Range': '(-∞, ∞)',
+            'Smoothness': 'Smooth',
+            'Monotonic': 'Yes',
+            'Zero-centered': 'Yes'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-wave-square',
+                title: 'Smooth everywhere',
+                description: 'Infinitely differentiable across all inputs'
+            },
+            {
+                icon: 'fas fa-question-circle',
+                title: 'Specialized use case',
+                description: 'Limited practical applications, mostly research'
+            },
+            {
+                icon: 'fas fa-balance-scale',
+                title: 'Zero-centered',
+                description: 'Symmetric behavior around zero'
+            },
+            {
+                icon: 'fas fa-calculator',
+                title: 'Computationally expensive',
+                description: 'Requires hyperbolic tangent computation'
+            }
+        ]
+    },
+    {
+        id: 'threshold',
+        name: 'Threshold',
+        fullName: 'Threshold Function',
+        description: 'Hard threshold that replaces values below threshold with a specified value.',
+        formula: 'f(x) = x if x > threshold, value otherwise',
+        category: 'advanced',
+        tags: ['hard-threshold', 'binary', 'step-function'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.Threshold()
+threshold = nn.Threshold(threshold=0.1, value=20)
+x = torch.tensor([-1.0, 0.05, 0.1, 0.5, 1.0])
+output = threshold(x)
+print(output)  # tensor([20.0000, 20.0000, 20.0000, 0.5000, 1.0000])
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.threshold(x, threshold=0.1, value=20, inplace=False)
+
+# Custom thresholding
+threshold_custom = nn.Threshold(threshold=0.5, value=0.0)
+
+# Example for creating binary activations
+class BinaryGate(nn.Module):
+    def __init__(self, threshold_val=0.0):
+        super().__init__()
+        self.threshold = nn.Threshold(threshold=threshold_val, value=0.0)
+    
+    def forward(self, x):
+        return self.threshold(x)`,
+        properties: {
+            'Output Range': '{value} ∪ (threshold, ∞)',
+            'Smoothness': 'Non-smooth',
+            'Monotonic': 'Piecewise',
+            'Zero-centered': 'Depends on params'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-cut',
+                title: 'Hard decision boundary',
+                description: 'Creates sharp cutoff at threshold value'
+            },
+            {
+                icon: 'fas fa-exclamation-triangle',
+                title: 'Non-differentiable',
+                description: 'Discontinuous function can block gradients'
+            },
+            {
+                icon: 'fas fa-sliders-h',
+                title: 'Highly configurable',
+                description: 'Both threshold and replacement value are tunable'
+            },
+            {
+                icon: 'fas fa-microchip',
+                title: 'Simple operation',
+                description: 'Very fast comparison and assignment'
+            }
+        ]
+    },
+    {
+        id: 'logsoftmax',
+        name: 'LogSoftmax',
+        fullName: 'Log Softmax',
+        description: 'Computes logarithm of softmax in numerically stable way, commonly used with NLL loss for classification.',
+        formula: 'f(x_i) = x_i - log(Σ_j e^(x_j))',
+        category: 'common',
+        tags: ['numerically-stable', 'classification', 'log-probabilities'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.LogSoftmax()
+log_softmax = nn.LogSoftmax(dim=1)
+x = torch.tensor([[1.0, 2.0, 3.0], [1.0, 5.0, 1.0]])
+output = log_softmax(x)
+print(output)
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.log_softmax(x, dim=1)
+
+# Common use in classification
+class ClassifierWithLogSoftmax(nn.Module):
+    def __init__(self, input_size, num_classes):
+        super().__init__()
+        self.linear = nn.Linear(input_size, num_classes)
+        self.log_softmax = nn.LogSoftmax(dim=1)
+    
+    def forward(self, x):
+        logits = self.linear(x)
+        return self.log_softmax(logits)
+
+# Use with NLLLoss
+criterion = nn.NLLLoss()`,
+        properties: {
+            'Output Range': '(-∞, 0]',
+            'Smoothness': 'Smooth',
+            'Monotonic': 'Order-preserving',
+            'Zero-centered': 'No'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-calculator',
+                title: 'Numerically stable',
+                description: 'Avoids numerical overflow in softmax computation'
+            },
+            {
+                icon: 'fas fa-link',
+                title: 'Perfect with NLL loss',
+                description: 'Designed specifically for use with NLLLoss'
+            },
+            {
+                icon: 'fas fa-percentage',
+                title: 'Log probabilities',
+                description: 'Outputs log probabilities that sum to log(1) = 0'
+            },
+            {
+                icon: 'fas fa-exclamation-triangle',
+                title: 'Always negative',
+                description: 'All outputs are negative (logarithm of probabilities)'
+            }
+        ]
+    },
+    {
+        id: 'softmax2d',
+        name: 'Softmax2d',
+        fullName: 'Softmax 2D',
+        description: 'Applies softmax over features at each spatial location, useful for dense prediction tasks.',
+        formula: 'Applied per (h,w): softmax over channel dimension',
+        category: 'advanced',
+        tags: ['spatial', 'dense-prediction', 'segmentation'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.Softmax2d()
+softmax2d = nn.Softmax2d()
+# Input: (batch_size, channels, height, width)
+x = torch.randn(2, 3, 4, 4)
+output = softmax2d(x)
+print(f"Input shape: {x.shape}")
+print(f"Output shape: {output.shape}")
+print(f"Sum over channels at (0,0): {output[0, :, 0, 0].sum()}")
+
+# Equivalent using regular softmax
+output_equiv = F.softmax(x, dim=1)
+
+# Common use in semantic segmentation
+class SegmentationHead(nn.Module):
+    def __init__(self, in_channels, num_classes):
+        super().__init__()
+        self.conv = nn.Conv2d(in_channels, num_classes, 1)
+        self.softmax2d = nn.Softmax2d()
+    
+    def forward(self, x):
+        logits = self.conv(x)
+        return self.softmax2d(logits)`,
+        properties: {
+            'Output Range': '[0, 1]',
+            'Smoothness': 'Smooth',
+            'Monotonic': 'Order-preserving',
+            'Zero-centered': 'No'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-map',
+                title: 'Spatial probability maps',
+                description: 'Creates probability distribution per pixel location'
+            },
+            {
+                icon: 'fas fa-eye',
+                title: 'Perfect for segmentation',
+                description: 'Ideal for semantic/instance segmentation tasks'
+            },
+            {
+                icon: 'fas fa-layer-group',
+                title: 'Preserves spatial structure',
+                description: 'Maintains spatial relationships while normalizing'
+            },
+            {
+                icon: 'fas fa-exclamation-triangle',
+                title: 'Can wash out small activations',
+                description: 'May suppress important but small feature responses'
+            }
+        ]
+    },
+    {
+        id: 'softmin',
+        name: 'Softmin',
+        fullName: 'Soft Minimum',
+        description: 'Assigns higher probabilities to smaller values, inverse of softmax behavior.',
+        formula: 'f(x_i) = e^(-x_i) / Σ_j e^(-x_j)',
+        category: 'advanced',
+        tags: ['inverse-softmax', 'minimum-emphasis', 'attention'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.Softmin()
+softmin = nn.Softmin(dim=1)
+x = torch.tensor([[1.0, 2.0, 3.0], [1.0, 5.0, 1.0]])
+output = softmin(x)
+print(output)  # Smaller values get higher probabilities
+
+# Method 2: Using functional interface
+import torch.nn.functional as F
+output = F.softmin(x, dim=1)
+
+# Equivalent to softmax of negative input
+output_equiv = F.softmax(-x, dim=1)
+
+# Example in distance-based attention
+class DistanceAttention(nn.Module):
+    def __init__(self, feature_dim):
+        super().__init__()
+        self.feature_dim = feature_dim
+        self.softmin = nn.Softmin(dim=1)
+    
+    def forward(self, query, keys):
+        # Compute distances
+        distances = torch.norm(query.unsqueeze(1) - keys, dim=2)
+        # Apply softmin to emphasize closer items
+        attention_weights = self.softmin(distances)
+        return attention_weights`,
+        properties: {
+            'Output Range': '[0, 1]',
+            'Smoothness': 'Smooth',
+            'Monotonic': 'Inversely monotonic',
+            'Zero-centered': 'No'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-arrow-down',
+                title: 'Emphasizes smaller values',
+                description: 'Higher probability for smaller input values'
+            },
+            {
+                icon: 'fas fa-eye',
+                title: 'Useful for distance metrics',
+                description: 'Good for attention mechanisms based on distance'
+            },
+            {
+                icon: 'fas fa-question-circle',
+                title: 'Limited use cases',
+                description: 'Specialized function with narrow applications'
+            },
+            {
+                icon: 'fas fa-calculator',
+                title: 'Same cost as softmax',
+                description: 'Computational complexity similar to softmax'
+            }
+        ]
+    },
+    {
+        id: 'adaptivelogsoftmax',
+        name: 'AdaptiveLogSoftmax',
+        fullName: 'Adaptive Log Softmax With Loss',
+        description: 'Efficient softmax approximation for large vocabularies using hierarchical clustering.',
+        formula: 'Hierarchical softmax with adaptive clustering',
+        category: 'advanced',
+        tags: ['large-vocabulary', 'efficient', 'hierarchical'],
+        code: `import torch
+import torch.nn as nn
+
+# AdaptiveLogSoftmaxWithLoss for large vocabularies
+vocab_size = 50000
+input_size = 512
+cutoffs = [2000, 10000]  # Hierarchical cutoffs
+
+adaptive_softmax = nn.AdaptiveLogSoftmaxWithLoss(
+    in_features=input_size,
+    n_classes=vocab_size,
+    cutoffs=cutoffs,
+    div_value=4.0
+)
+
+# Input: (seq_len, batch_size, input_size)
+# Target: (seq_len * batch_size,)
+input_tensor = torch.randn(10, 32, input_size)
+target = torch.randint(0, vocab_size, (10 * 32,))
+
+# Forward pass returns output and loss
+output, loss = adaptive_softmax(input_tensor.view(-1, input_size), target)
+
+# For inference, use log_prob method
+log_probs = adaptive_softmax.log_prob(input_tensor.view(-1, input_size))`,
+        properties: {
+            'Output Range': '(-∞, 0]',
+            'Smoothness': 'Smooth',
+            'Monotonic': 'Order-preserving',
+            'Zero-centered': 'No'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-tachometer-alt',
+                title: 'Efficient for large vocabularies',
+                description: 'O(√V) complexity instead of O(V) for vocabulary size V'
+            },
+            {
+                icon: 'fas fa-layer-group',
+                title: 'Hierarchical structure',
+                description: 'Groups frequent and rare words for efficient computation'
+            },
+            {
+                icon: 'fas fa-comment',
+                title: 'Perfect for language models',
+                description: 'Designed specifically for large vocabulary NLP tasks'
+            },
+            {
+                icon: 'fas fa-cogs',
+                title: 'Complex setup',
+                description: 'Requires careful cutoff selection and vocabulary analysis'
+            }
+        ]
+    },
+    {
+        id: 'multiheadattention',
+        name: 'MultiheadAttn',
+        fullName: 'Multi-Head Attention',
+        description: 'Attention mechanism that allows the model to attend to information from different representation subspaces.',
+        formula: 'MultiHead(Q,K,V) = Concat(head₁,...,headₕ)W^O',
+        category: 'advanced',
+        tags: ['attention', 'transformer', 'multi-head'],
+        code: `import torch
+import torch.nn as nn
+
+# Method 1: Using nn.MultiheadAttention()
+embed_dim = 512
+num_heads = 8
+multihead_attn = nn.MultiheadAttention(
+    embed_dim=embed_dim,
+    num_heads=num_heads,
+    dropout=0.1,
+    batch_first=True
+)
+
+# Input tensors
+seq_len, batch_size = 20, 32
+query = torch.randn(batch_size, seq_len, embed_dim)
+key = torch.randn(batch_size, seq_len, embed_dim)
+value = torch.randn(batch_size, seq_len, embed_dim)
+
+# Forward pass
+attn_output, attn_weights = multihead_attn(query, key, value)
+
+# Self-attention (Q, K, V are the same)
+self_attn_output, self_attn_weights = multihead_attn(query, query, query)
+
+# With attention mask
+attn_mask = torch.tril(torch.ones(seq_len, seq_len))  # Causal mask
+masked_output, _ = multihead_attn(query, key, value, attn_mask=attn_mask)`,
+        properties: {
+            'Output Range': '(-∞, ∞)',
+            'Smoothness': 'Smooth',
+            'Monotonic': 'No',
+            'Zero-centered': 'Depends on input'
+        },
+        checklist: [
+            {
+                icon: 'fas fa-robot',
+                title: 'Transformer core',
+                description: 'Essential component of transformer architectures'
+            },
+            {
+                icon: 'fas fa-eye',
+                title: 'Attention mechanism',
+                description: 'Allows model to focus on relevant parts of input'
+            },
+            {
+                icon: 'fas fa-layer-group',
+                title: 'Multiple representation subspaces',
+                description: 'Each head learns different types of relationships'
+            },
+            {
+                icon: 'fas fa-memory',
+                title: 'Memory intensive',
+                description: 'Quadratic memory complexity in sequence length'
+            }
+        ]
     }
 ];
 

@@ -160,7 +160,7 @@ body {
 
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 2rem;
     margin-bottom: 2rem;
 }
@@ -176,6 +176,9 @@ body {
         -12px -12px 24px var(--shadow-light);
     position: relative;
     overflow: hidden;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
 }
 
 .card:hover {
@@ -197,10 +200,13 @@ body {
 }
 
 .card-title {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
     color: var(--text-primary);
+    line-height: 1.2;
+    word-wrap: break-word;
+    hyphens: auto;
 }
 
 .card-subtitle {
@@ -239,6 +245,7 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
     font-size: 0.85rem;
+    margin-top: auto;
 }
 
 .property {

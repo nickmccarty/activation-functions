@@ -13,6 +13,12 @@
         <header class="header">
             <h1 class="title">Neural Network Activation Functions</h1>
             <p class="subtitle">Explore PyTorch & TensorFlow implementations with interactive examples</p>
+            <div class="header-actions">
+                <button class="wizard-btn" onclick="openWizard()" title="Launch Activation Function Wizard">
+                    <i class="fas fa-magic"></i>
+                    <span>Find My Activation</span>
+                </button>
+            </div>
         </header>
         
         <div class="search-container">
@@ -42,7 +48,7 @@
         </div>
     </div>
     
-    <!-- Modal -->
+    <!-- Activation Function Details Modal -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -96,7 +102,49 @@
             </div>
         </div>
     </div>
+
+    <!-- Wizard Modal -->
+    <div id="wizardModal" class="modal wizard-modal">
+        <div class="modal-content wizard-modal-content">
+            <div class="modal-header">
+                <h2>Activation Function Wizard</h2>
+                <button class="modal-close" onclick="closeWizard()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <iframe id="wizardFrame" src="activation_wizard.html" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
     
     <script src="script.js"></script>
+    <script>
+        function openWizard() {
+            document.getElementById('wizardModal').classList.add('active');
+        }
+        
+        function closeWizard() {
+            document.getElementById('wizardModal').classList.remove('active');
+        }
+        
+        // Close wizard modal when clicking outside
+        document.addEventListener('click', (e) => {
+            const wizardModal = document.getElementById('wizardModal');
+            if (e.target === wizardModal) {
+                closeWizard();
+            }
+        });
+        
+        // Close wizard modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const wizardModal = document.getElementById('wizardModal');
+                if (wizardModal.classList.contains('active')) {
+                    closeWizard();
+                }
+            }
+        });
+    </script>
 </body>
 </html>

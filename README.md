@@ -1,13 +1,15 @@
 # PyTorch & TensorFlow Activation Functions Explorer
 
 [![Demo](https://img.shields.io/badge/Demo-Live%20Site-blue?style=for-the-badge&logo=github)](https://nickmccarty.me/activation-functions)
+[![Wizard](https://img.shields.io/badge/Wizard-Interactive%20Guide-purple?style=for-the-badge&logo=magic)](https://nickmccarty.me/activation-functions/activation_wizard.html)
 [![PyTorch](https://img.shields.io/badge/PyTorch-Ready-ee4c2c?style=flat&logo=pytorch)](https://pytorch.org/)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-Ready-ff6f00?style=flat&logo=tensorflow)](https://tensorflow.org/)
 
-An interactive, modern web application for exploring activation functions across **both PyTorch and TensorFlow** with detailed explanations, code examples, and practitioner guidance.
+An interactive, modern web application for exploring activation functions across **both PyTorch and TensorFlow** with detailed explanations, code examples, practitioner guidance, and an **intelligent wizard** to help you choose the perfect activation function for your use case.
 
 ## Features
 
+### Core Explorer
 - 🔍 **Smart Search** - Find activation functions by name, description, or properties
 - 🎨 **Neumorphic Design** - Modern, tactile UI with smooth animations
 - 📱 **Responsive** - Works seamlessly on desktop and mobile devices
@@ -17,6 +19,13 @@ An interactive, modern web application for exploring activation functions across
 - 🐍 **PyTorch Code** - Complete, runnable PyTorch examples
 - 🔶 **TensorFlow Code** - Complete, runnable TensorFlow/Keras examples
 - 🏷️ **Smart Filtering** - Category-based filtering (Common, Advanced, Smooth)
+
+### 🧙‍♂️ Interactive Wizard
+- 🎯 **Personalized Recommendations** - Get activation function suggestions based on your specific use case
+- 📋 **Step-by-Step Guidance** - Wizard walks you through architecture decisions
+- 📊 **Performance Visualizations** - Compare computational costs with interactive charts
+- 💻 **Implementation Examples** - See complete code examples for your chosen functions
+- 🎨 **Seamless Integration** - Launches in modal overlay without leaving the main app
 
 ## Complete Activation Function Coverage ✅
 
@@ -68,8 +77,25 @@ An interactive, modern web application for exploring activation functions across
 
 1. Clone this repository
 2. Open `index.html` in your browser
-3. Search and explore activation functions
-4. Click on any card to see detailed information
+3. **Use the Wizard**: Click "Find My Activation" to get personalized recommendations
+4. **Browse & Explore**: Search and filter through all 31 activation functions
+5. **Deep Dive**: Click on any card to see detailed implementation information
+
+### Two Ways to Explore
+
+#### 🧙‍♂️ **Guided Experience** (Recommended for beginners)
+Click the **"Find My Activation"** button to launch the interactive wizard that will:
+- Ask about your use case (output layer, hidden layers, special requirements)
+- Guide you through architecture decisions
+- Provide personalized recommendations with pros/cons analysis
+- Show implementation code for your specific needs
+
+#### 🔍 **Free Exploration** (Great for browsing)
+Use the main interface to:
+- Search through all activation functions
+- Filter by category (Common, Advanced, Smooth)
+- Click cards for detailed technical information
+- Compare PyTorch and TensorFlow implementations
 
 ## What Each Modal Provides
 
@@ -82,11 +108,12 @@ An interactive, modern web application for exploring activation functions across
 
 ## Technology Stack
 
-- **HTML5** - Semantic structure
-- **CSS3** - Neumorphic design with custom properties
+- **HTML5** - Semantic structure with modal overlays
+- **CSS3** - Neumorphic design with custom properties and responsive layouts
 - **Vanilla JavaScript** - No dependencies, lightweight and fast
-- **Font Awesome** - Icons
-- **Google Fonts** - Inter typeface
+- **Plotly.js** - Interactive performance visualizations in wizard
+- **Font Awesome** - Icons and visual elements
+- **Google Fonts** - Inter typeface for modern typography
 
 ## Implementation Complete 🎉
 
@@ -95,11 +122,14 @@ All activation functions from PyTorch's `torch.nn` module have been implemented 
 - ✅ **PyTorch code examples** - Complete torch.nn and functional implementations
 - ✅ **TensorFlow code examples** - Complete tf.keras and tf.nn implementations  
 - ✅ **Framework switching** - Toggle between PyTorch and TensorFlow in each modal
+- ✅ **Interactive wizard** - Personalized recommendations based on use case
+- ✅ **Performance visualizations** - Computational cost comparisons
 - ✅ Practitioner guidance and checklists
 - ✅ Interactive search and filtering
-- ✅ Modern neumorphic design
+- ✅ Modern neumorphic design with responsive layouts
+- ✅ **Jupyter notebook guide** - Executable examples for hands-on learning
 
-The application now covers **all 31 activation functions** with implementations for both major deep learning frameworks.
+The application now covers **all 31 activation functions** with implementations for both major deep learning frameworks, plus intelligent guidance tools.
 
 ## Contributing
 

@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activation Function Wizard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #e6e7ee;
+            --surface-color: #e6e7ee;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --accent-color: #3498db;
+            --accent-hover: #2980b9;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --shadow-light: #ffffff;
+            --shadow-dark: #a3b1c6;
+            --border-radius: 20px;
+            --border-radius-small: 12px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .wizard-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wizard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .wizard-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-color), #8e44ad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .wizard-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .progress-bar {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 
+                inset 8px 8px 16px var(--shadow-dark),
+                inset -8px -8px 16px var(--shadow-light);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--shadow-dark);
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+        .progress-line-fill {
+            height: 100%;
+            background: var(--accent-color);
+            border-radius: 2px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-step {
+            background: var(--surface-color);
+            border: 3px solid var(--shadow-dark);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 2;
+            transition: var(--transition);
+            box-shadow: 
+                6px 6px 12px var(--shadow-dark),
+                -6px -6px 12px var(--shadow-light);
+        }
+
+        .progress-step.active {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .progress-step.completed {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+        }
+
+        .step-content {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 
+                12px 12px 24px var(--shadow-dark),
+                -12px -12px 24px var(--shadow-light);
+            min-height: 500px;
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeInSlide 0.5s ease-out;
+        }
+
+        @keyframes fadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .step-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .choice-card {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 3px solid transparent;
+            box-shadow: 
+                8px 8px 16px var(--shadow-dark),
+                -8px -8px 16px var(--shadow-light);
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .choice-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                12px 12px 24px var(--shadow-dark),
+                -12px -12px 24px var(--shadow-light);
+        }
+
+        .choice-card.selected {
+            border-color: var(--accent-color);
+            background: linear-gradient(135deg, var(--accent-color)15, var(--surface-color));
+        }
+
+        .choice-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .choice-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .choice-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .info-section {
+            background: var(--surface-color);
+            border-radius: var(--border-radius-small);
+            padding: 2rem;
+            margin: 1.5rem 0;
+            box-shadow: 
+                inset 6px 6px 12px var(--shadow-dark),
+                inset -6px -6px 12px var(--shadow-light);
+        }
+
+        .info-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comparison-table {
+            width: 100%;
+            margin: 1rem 0;
+            background: var(--surface-color);
+            border-radius: var(--border-radius-small);
+            overflow: hidden;
+            box-shadow: 
+                6px 6px 12px var(--shadow-dark),
+                -6px -6px 12px var(--shadow-light);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
+            background: var(--accent-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .code-preview {
+            background: var(--surface-color);
+            border-radius: var(--border-radius-small);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: 
+                inset 8px 8px 16px var(--shadow-dark),
+                inset -8px -8px 16px var(--shadow-light);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        .visualization-container {
+            background: var(--surface-color);
+            border-radius: var(--border-radius-small);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 
+                6px 6px 12px var(--shadow-dark),
+                -6px -6px 12px var(--shadow-light);
+            height: 400px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: auto;
+            padding-top: 2rem;
+        }
+
+        .nav-btn {
+            background: var(--surface-color);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius-small);
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 
+                8px 8px 16px var(--shadow-dark),
+                -8px -8px 16px var(--shadow-light);
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                10px 10px 20px var(--shadow-dark),
+                -10px -10px 20px var(--shadow-light);
+        }
+
+        .nav-btn:active {
+            transform: translateY(0);
+            box-shadow: 
+                inset 4px 4px 8px var(--shadow-dark),
+                inset -4px -4px 8px var(--shadow-light);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .nav-btn.primary {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .nav-btn.primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .recommendation-card {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 
+                8px 8px 16px var(--shadow-dark),
+                -8px -8px 16px var(--shadow-light);
+            border: 3px solid transparent;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                12px 12px 24px var(--shadow-dark),
+                -12px -12px 24px var(--shadow-light);
+        }
+
+        .recommendation-card.best {
+            border-color: var(--success-color);
+        }
+
+        .recommendation-card.alternative {
+            border-color: var(--warning-color);
+        }
+
+        .recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .recommendation-icon {
+            font-size: 2rem;
+            color: var(--accent-color);
+        }
+
+        .recommendation-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .recommendation-badge {
+            background: var(--success-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: auto;
+        }
+
+        .recommendation-badge.alternative {
+            background: var(--warning-color);
+        }
+
+        .recommendation-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pros, .cons {
+            background: var(--surface-color);
+            border-radius: var(--border-radius-small);
+            padding: 1rem;
+            box-shadow: 
+                inset 4px 4px 8px var(--shadow-dark),
+                inset -4px -4px 8px var(--shadow-light);
+        }
+
+        .pros h4, .cons h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pros h4 {
+            color: var(--success-color);
+        }
+
+        .cons h4 {
+            color: var(--warning-color);
+        }
+
+        .pros ul, .cons ul {
+            list-style: none;
+            font-size: 0.9rem;
+        }
+
+        .pros li, .cons li {
+            margin-bottom: 0.25rem;
+            color: var(--text-secondary);
+        }
+
+        .framework-toggle {
+            display: flex;
+            background: var(--surface-color);
+            border-radius: var(--border-radius-small);
+            padding: 0.5rem;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 
+                inset 4px 4px 8px var(--shadow-dark),
+                inset -4px -4px 8px var(--shadow-light);
+        }
+
+        .framework-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 0.75rem;
+            border-radius: var(--border-radius-small);
+            font-family: inherit;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .framework-btn.active {
+            background: var(--accent-color);
+            color: white;
+            box-shadow: 
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, var(--accent-color)10, var(--surface-color));
+            border: 2px solid var(--accent-color);
+            border-radius: var(--border-radius-small);
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .highlight-box h4 {
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .reset-btn {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--surface-color);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            transition: var(--transition);
+            box-shadow: 
+                6px 6px 12px var(--shadow-dark),
+                -6px -6px 12px var(--shadow-light);
+            z-index: 100;
+        }
+
+        .reset-btn:hover {
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .wizard-container {
+                padding: 1rem;
+            }
+            
+            .wizard-title {
+                font-size: 2rem;
+            }
+            
+            .step-content {
+                padding: 2rem;
+                min-height: 400px;
+            }
+            
+            .choice-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+            
+            .navigation {
+                flex-direction: column;
+            }
+            
+            .progress-steps {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .progress-line {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="reset-btn" onclick="resetWizard()" title="Start Over">
+        <i class="fas fa-redo"></i>
+    </button>
+
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1 class="wizard-title">Activation Function Wizard</h1>
+            <p class="wizard-subtitle">Let's find the perfect activation function for your neural network</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-steps">
+                <div class="progress-line">
+                    <div class="progress-line-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-step active" data-step="1">1</div>
+                <div class="progress-step" data-step="2">2</div>
+                <div class="progress-step" data-step="3">3</div>
+                <div class="progress-step" data-step="4">4</div>
+                <div class="progress-step" data-step="5">5</div>
+            </div>
+        </div>
+
+        <!-- Step 1: Use Case -->
+        <div class="step-content active" id="step1">
+            <h2 class="step-title">What's your primary use case?</h2>
+            <p class="step-description">Understanding your neural network's purpose helps us recommend the most suitable activation functions.</p>
+            
+            <div class="choice-grid">
+                <div class="choice-card" data-choice="output-layer">
+                    <div class="choice-icon"><i class="fas fa-bullseye"></i></div>
+                    <div class="choice-title">Output Layer</div>
+                    <div class="choice-description">I'm designing the final layer that produces my model's predictions</div>
+                </div>
+                <div class="choice-card" data-choice="hidden-layers">
+                    <div class="choice-icon"><i class="fas fa-layer-group"></i></div>
+                    <div class="choice-title">Hidden Layers</div>
+                    <div class="choice-description">I need activation functions for intermediate layers in my network</div>
+                </div>
+                <div class="choice-card" data-choice="special-purpose">
+                    <div class="choice-icon"><i class="fas fa-cog"></i></div>
+                    <div class="choice-title">Special Purpose</div>
+                    <div class="choice-description">I have specific requirements like gating, sparsity, or custom behavior</div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-title">
+                    <i class="fas fa-info-circle"></i>
+                    Quick Guide
+                </div>
+                <p><strong>Output layers</strong> require activations that match your task type (classification, regression, etc.)</p>
+                <p><strong>Hidden layers</strong> focus on gradient flow, computational efficiency, and preventing common problems</p>
+                <p><strong>Special purpose</strong> activations solve specific architectural challenges</p>
+            </div>
+        </div>
+
+        <!-- Step 2: Task Type (for output layer) -->
+        <div class="step-content" id="step2-output">
+            <h2 class="step-title">What type of output do you need?</h2>
+            <p class="step-description">Different tasks require different output characteristics and ranges.</p>
+            
+            <div class="choice-grid">
+                <div class="choice-card" data-choice="binary-classification">
+                    <div class="choice-icon"><i class="fas fa-toggle-on"></i></div>
+                    <div class="choice-title">Binary Classification</div>
+                    <div class="choice-description">Predict one of two classes (yes/no, spam/not spam, etc.)</div>
+                </div>
+                <div class="choice-card" data-choice="multiclass-classification">
+                    <div class="choice-icon"><i class="fas fa-list"></i></div>
+                    <div class="choice-title">Multi-class Classification</div>
+                    <div class="choice-description">Choose one class from multiple options (cat/dog/bird, etc.)</div>
+                </div>
+                <div class="choice-card" data-choice="regression">
+                    <div class="choice-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="choice-title">Regression</div>
+                    <div class="choice-description">Predict continuous numerical values (price, temperature, etc.)</div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Output Layer Guidelines
+                </div>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Task Type</th>
+                            <th>Output Range</th>
+                            <th>Best Activation</th>
+                            <th>Loss Function</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Binary Classification</td>
+                            <td>[0, 1] (probability)</td>
+                            <td>Sigmoid</td>
+                            <td>Binary Cross-Entropy</td>
+                        </tr>
+                        <tr>
+                            <td>Multi-class Classification</td>
+                            <td>[0, 1] (probabilities sum to 1)</td>
+                            <td>Softmax</td>
+                            <td>Cross-Entropy</td>
+                        </tr>
+                        <tr>
+                            <td>Regression</td>
+                            <td>(-∞, ∞) or constrained</td>
+                            <td>None / ReLU / Sigmoid</td>
+                            <td>MSE / MAE</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Step 2: Architecture Focus (for hidden layers) -->
+        <div class="step-content" id="step2-hidden">
+            <h2 class="step-title">What's your primary focus?</h2>
+            <p class="step-description">Different scenarios prioritize different aspects of activation functions.</p>
+            
+            <div class="choice-grid">
+                <div class="choice-card" data-choice="speed-efficiency">
+                    <div class="choice-icon"><i class="fas fa-rocket"></i></div>
+                    <div class="choice-title">Speed & Efficiency</div>
+                    <div class="choice-description">Fast inference, mobile deployment, or resource-constrained environments</div>
+                </div>
+                <div class="choice-card" data-choice="modern-performance">
+                    <div class="choice-icon"><i class="fas fa-star"></i></div>
+                    <div class="choice-title">Modern Performance</div>
+                    <div class="choice-description">State-of-the-art results using latest research and architectures</div>
+                </div>
+                <div class="choice-card" data-choice="stability-gradients">
+                    <div class="choice-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div class="choice-title">Stability & Gradients</div>
+                    <div class="choice-description">Solving gradient problems, very deep networks, or training stability</div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Performance Comparison
+                </div>
+                <div class="visualization-container" id="performanceChart"></div>
+            </div>
+        </div>
+
+        <!-- Step 3: Architecture Type (for modern performance) -->
+        <div class="step-content" id="step3-architecture">
+            <h2 class="step-title">What type of architecture are you building?</h2>
+            <p class="step-description">Different architectures have evolved to prefer specific activation functions.</p>
+            
+            <div class="choice-grid">
+                <div class="choice-card" data-choice="transformers-nlp">
+                    <div class="choice-icon"><i class="fas fa-language"></i></div>
+                    <div class="choice-title">Transformers / NLP</div>
+                    <div class="choice-description">BERT, GPT, T5, or other attention-based language models</div>
+                </div>
+                <div class="choice-card" data-choice="computer-vision">
+                    <div class="choice-icon"><i class="fas fa-eye"></i></div>
+                    <div class="choice-title">Computer Vision</div>
+                    <div class="choice-description">CNNs, ResNets, Vision Transformers, or image processing networks</div>
+                </div>
+                <div class="choice-card" data-choice="general-mlp">
+                    <div class="choice-icon"><i class="fas fa-sitemap"></i></div>
+                    <div class="choice-title">General MLP</div>
+                    <div class="choice-description">Multi-layer perceptrons, tabular data, or general feedforward networks</div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-title">
+                    <i class="fas fa-history"></i>
+                    Architecture Evolution
+                </div>
+                <p>Modern architectures have converged on specific activation functions through extensive research:</p>
+                <ul style="margin-left: 2rem; margin-top: 1rem;">
+                    <li><strong>Transformers:</strong> GELU has become the standard since BERT</li>
+                    <li><strong>Computer Vision:</strong> SiLU/Swish and Mish show strong results</li>
+                    <li><strong>General MLPs:</strong> ReLU remains the reliable default choice</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 4: Specific Requirements -->
+        <div class="step-content" id="step4-requirements">
+            <h2 class="step-title">Any specific requirements?</h2>
+            <p class="step-description">Let's fine-tune based on your specific needs and constraints.</p>
+            
+            <div class="choice-grid">
+                <div class="choice-card" data-choice="mobile-deployment">
+                    <div class="choice-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <div class="choice-title">Mobile Deployment</div>
+                    <div class="choice-description">Need efficient inference on mobile devices or edge hardware</div>
+                </div>
+                <div class="choice-card" data-choice="gradient-problems">
+                    <div class="choice-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="choice-title">Gradient Problems</div>
+                    <div class="choice-description">Experiencing dying ReLU, vanishing gradients, or training instability</div>
+                </div>
+                <div class="choice-card" data-choice="no-special-requirements">
+                    <div class="choice-icon"><i class="fas fa-check"></i></div>
+                    <div class="choice-title">Standard Setup</div>
+                    <div class="choice-description">No special constraints, looking for best general performance</div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-title">
+                    <i class="fas fa-tools"></i>
+                    Common Problems & Solutions
+                </div>
+                <div class="highlight-box">
+                    <h4>Dying ReLU Problem</h4>
+                    <p>When neurons get stuck outputting zero and stop learning. Solutions: LeakyReLU, ELU, or modern alternatives like GELU.</p>
+                </div>
+                <div class="highlight-box">
+                    <h4>Vanishing Gradients</h4>
+                    <p>Gradients become too small in deep networks. Solutions: ReLU family, GELU, or self-normalizing SELU.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Recommendations -->
+        <div class="step-content" id="step5-recommendations">
+            <h2 class="step-title">Your Personalized Recommendations</h2>
+            <p class="step-description">Based on your requirements, here are the best activation functions for your use case:</p>
+            
+            <div class="recommendations" id="recommendationsContainer">
+                <!-- Recommendations will be populated dynamically -->
+            </div>
+
+            <div class="framework-toggle">
+                <button class="framework-btn active" data-framework="pytorch">
+                    <i class="fab fa-python"></i> PyTorch
+                </button>
+                <button class="framework-btn" data-framework="tensorflow">
+                    <i class="fas fa-cube"></i> TensorFlow
+                </button>
+            </div>
+
+            <div class="info-section">
+                <div class="info-title">
+                    <i class="fas fa-code"></i>
+                    Implementation Example
+                </div>
+                <div class="code-preview" id="implementationCode">
+                    <!-- Code will be populated based on recommendations -->
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="previousStep()" disabled>
+                <i class="fas fa-arrow-left"></i>
+                Previous
+            </button>
+            <button class="nav-btn primary" id="nextBtn" onclick="nextStep()" disabled>
+                Next
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Wizard state
+        let currentStep = 1;
+        let userChoices = {};
+        let currentFramework = 'pytorch';
+
+        // Activation function data with recommendations
+        const activationData = {
+            sigmoid: {
+                name: 'Sigmoid',
+                formula: 'f(x) = 1 / (1 + e^(-x))',
+                pytorch: `import torch.nn as nn\n\n# For binary classification output\nmodel = nn.Sequential(\n    nn.Linear(input_size, hidden_size),\n    nn.ReLU(),\n    nn.Linear(hidden_size, 1),\n    nn.Sigmoid()  # Output probabilities [0,1]\n)`,
+                tensorflow: `import tensorflow as tf\n\n# For binary classification output\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Dense(hidden_size, activation='relu'),\n    tf.keras.layers.Dense(1, activation='sigmoid')\n])`,
+                pros: ['Perfect probability output [0,1]', 'Smooth gradients', 'Well-understood behavior'],
+                cons: ['Vanishing gradients', 'Not zero-centered', 'Saturates for large inputs'],
+                useCase: 'Binary classification output layers'
+            },
+            softmax: {
+                name: 'Softmax',
+                formula: 'f(x_i) = e^(x_i) / Σ(e^(x_j))',
+                pytorch: `import torch.nn as nn\n\n# For multi-class classification\nmodel = nn.Sequential(\n    nn.Linear(input_size, hidden_size),\n    nn.ReLU(),\n    nn.Linear(hidden_size, num_classes)\n    # Note: PyTorch CrossEntropyLoss includes softmax\n)`,
+                tensorflow: `import tensorflow as tf\n\n# For multi-class classification\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Dense(hidden_size, activation='relu'),\n    tf.keras.layers.Dense(num_classes, activation='softmax')\n])`,
+                pros: ['Probabilities sum to 1', 'Interpretable output', 'Standard for classification'],
+                cons: ['Expensive computation', 'Can wash out small differences', 'Only for output layers'],
+                useCase: 'Multi-class classification output'
+            },
+            relu: {
+                name: 'ReLU',
+                formula: 'f(x) = max(0, x)',
+                pytorch: `import torch.nn as nn\n\n# Standard deep network\nmodel = nn.Sequential(\n    nn.Linear(input_size, 128),\n    nn.ReLU(),\n    nn.Linear(128, 64),\n    nn.ReLU(),\n    nn.Linear(64, output_size)\n)`,
+                tensorflow: `import tensorflow as tf\n\n# Standard deep network\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Dense(128, activation='relu'),\n    tf.keras.layers.Dense(64, activation='relu'),\n    tf.keras.layers.Dense(output_size)\n])`,
+                pros: ['Fastest computation', 'Simple and reliable', 'Good gradient flow', 'Prevents vanishing gradients'],
+                cons: ['Dying ReLU problem', 'Not zero-centered', 'Non-smooth'],
+                useCase: 'Default choice for hidden layers'
+            },
+            gelu: {
+                name: 'GELU',
+                formula: 'f(x) = x * Φ(x)',
+                pytorch: `import torch.nn as nn\n\n# Modern transformer-style network\nclass TransformerBlock(nn.Module):\n    def __init__(self, d_model, d_ff):\n        super().__init__()\n        self.linear1 = nn.Linear(d_model, d_ff)\n        self.gelu = nn.GELU()\n        self.linear2 = nn.Linear(d_ff, d_model)\n        self.dropout = nn.Dropout(0.1)\n\n    def forward(self, x):\n        return self.linear2(self.dropout(self.gelu(self.linear1(x))))`,
+                tensorflow: `import tensorflow as tf\n\n# Modern transformer-style network\nclass TransformerBlock(tf.keras.layers.Layer):\n    def __init__(self, d_model, d_ff, dropout_rate=0.1):\n        super().__init__()\n        self.dense1 = tf.keras.layers.Dense(d_ff, activation='gelu')\n        self.dense2 = tf.keras.layers.Dense(d_model)\n        self.dropout = tf.keras.layers.Dropout(dropout_rate)\n\n    def call(self, x, training=None):\n        x = self.dense1(x)\n        x = self.dropout(x, training=training)\n        return self.dense2(x)`,
+                pros: ['Smooth everywhere', 'Transformer standard', 'Better than ReLU variants', 'Probabilistic interpretation'],
+                cons: ['Slower than ReLU', 'More complex computation'],
+                useCase: 'Transformers and modern deep networks'
+            },
+            mish: {
+                name: 'Mish',
+                formula: 'f(x) = x * tanh(softplus(x))',
+                pytorch: `import torch.nn as nn\n\n# Modern computer vision network\nclass MishCNN(nn.Module):\n    def __init__(self, num_classes):\n        super().__init__()\n        self.features = nn.Sequential(\n            nn.Conv2d(3, 64, 3, padding=1),\n            nn.Mish(),\n            nn.Conv2d(64, 128, 3, padding=1),\n            nn.Mish(),\n            nn.AdaptiveAvgPool2d(1)\n        )\n        self.classifier = nn.Linear(128, num_classes)\n\n    def forward(self, x):\n        x = self.features(x)\n        x = x.view(x.size(0), -1)\n        return self.classifier(x)`,
+                tensorflow: `import tensorflow as tf\n\n# Custom Mish implementation\ndef mish(x):\n    return x * tf.nn.tanh(tf.nn.softplus(x))\n\n# Modern computer vision network\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Conv2D(64, 3, padding='same'),\n    tf.keras.layers.Lambda(mish),\n    tf.keras.layers.Conv2D(128, 3, padding='same'),\n    tf.keras.layers.Lambda(mish),\n    tf.keras.layers.GlobalAveragePooling2D(),\n    tf.keras.layers.Dense(num_classes)\n])`,
+                pros: ['Self-regularizing', 'Excellent for CV', 'Smooth negative region', 'Strong empirical results'],
+                cons: ['Most expensive computation', 'Newer (less tested)', 'Not built-in everywhere'],
+                useCase: 'Computer vision and self-regularization'
+            },
+            leakyrelu: {
+                name: 'LeakyReLU',
+                formula: 'f(x) = max(αx, x)',
+                pytorch: `import torch.nn as nn\n\n# Network with LeakyReLU to prevent dying neurons\nmodel = nn.Sequential(\n    nn.Linear(input_size, 256),\n    nn.LeakyReLU(negative_slope=0.01),\n    nn.Linear(256, 128),\n    nn.LeakyReLU(negative_slope=0.01),\n    nn.Linear(128, output_size)\n)`,
+                tensorflow: `import tensorflow as tf\n\n# Network with LeakyReLU\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Dense(256),\n    tf.keras.layers.LeakyReLU(alpha=0.01),\n    tf.keras.layers.Dense(128),\n    tf.keras.layers.LeakyReLU(alpha=0.01),\n    tf.keras.layers.Dense(output_size)\n])`,
+                pros: ['Prevents dying ReLU', 'Fast computation', 'Simple fix', 'Learnable with PReLU'],
+                cons: ['Still not zero-centered', 'May not help much', 'Hyperparameter to tune'],
+                useCase: 'Fixing dying ReLU problems'
+            },
+            hardswish: {
+                name: 'Hardswish',
+                formula: 'f(x) = x * ReLU6(x + 3) / 6',
+                pytorch: `import torch.nn as nn\n\n# Mobile-optimized network\nclass MobileNet(nn.Module):\n    def __init__(self, num_classes):\n        super().__init__()\n        self.features = nn.Sequential(\n            nn.Conv2d(3, 32, 3, stride=2, padding=1),\n            nn.Hardswish(),\n            nn.Conv2d(32, 64, 3, padding=1),\n            nn.Hardswish()\n        )\n        self.classifier = nn.Linear(64, num_classes)\n\n    def forward(self, x):\n        x = self.features(x)\n        x = F.adaptive_avg_pool2d(x, 1)\n        x = x.view(x.size(0), -1)\n        return self.classifier(x)`,
+                tensorflow: `import tensorflow as tf\n\n# Custom Hardswish for TensorFlow\ndef hardswish(x):\n    return x * tf.nn.relu6(x + 3) / 6\n\n# Mobile-optimized network\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Conv2D(32, 3, strides=2, padding='same'),\n    tf.keras.layers.Lambda(hardswish),\n    tf.keras.layers.Conv2D(64, 3, padding='same'),\n    tf.keras.layers.Lambda(hardswish),\n    tf.keras.layers.GlobalAveragePooling2D(),\n    tf.keras.layers.Dense(num_classes)\n])`,
+                pros: ['Mobile optimized', 'Quantization friendly', 'Fast approximation', 'Hardware efficient'],
+                cons: ['Less expressive than Swish', 'Newer function', 'Limited research'],
+                useCase: 'Mobile and edge deployment'
+            }
+        };
+
+        // Recommendation logic
+        const recommendations = {
+            'output-layer.binary-classification': [
+                { activation: 'sigmoid', type: 'best', reason: 'Perfect for binary classification with probability output' }
+            ],
+            'output-layer.multiclass-classification': [
+                { activation: 'softmax', type: 'best', reason: 'Standard for multi-class classification with probability distribution' }
+            ],
+            'output-layer.regression': [
+                { activation: 'relu', type: 'best', reason: 'For positive-only outputs like prices, counts' },
+                { activation: 'sigmoid', type: 'alternative', reason: 'For outputs bounded to [0,1] range' }
+            ],
+            'hidden-layers.speed-efficiency.mobile-deployment': [
+                { activation: 'relu', type: 'best', reason: 'Fastest computation, mobile-friendly' },
+                { activation: 'hardswish', type: 'alternative', reason: 'Mobile-optimized Swish approximation' }
+            ],
+            'hidden-layers.speed-efficiency.no-special-requirements': [
+                { activation: 'relu', type: 'best', reason: 'Default choice: fast, reliable, well-tested' },
+                { activation: 'leakyrelu', type: 'alternative', reason: 'If experiencing dying ReLU problems' }
+            ],
+            'hidden-layers.modern-performance.transformers-nlp': [
+                { activation: 'gelu', type: 'best', reason: 'Standard in BERT, GPT, and modern transformers' }
+            ],
+            'hidden-layers.modern-performance.computer-vision': [
+                { activation: 'mish', type: 'best', reason: 'Excellent for CV with self-regularization' },
+                { activation: 'gelu', type: 'alternative', reason: 'Smooth alternative with good CV results' }
+            ],
+            'hidden-layers.modern-performance.general-mlp': [
+                { activation: 'gelu', type: 'best', reason: 'Modern choice with smooth gradients' },
+                { activation: 'relu', type: 'alternative', reason: 'Reliable fallback if GELU is too slow' }
+            ],
+            'hidden-layers.stability-gradients.gradient-problems': [
+                { activation: 'leakyrelu', type: 'best', reason: 'Prevents dying ReLU with minimal overhead' },
+                { activation: 'gelu', type: 'alternative', reason: 'Smooth activation without dead neurons' }
+            ],
+            'special-purpose': [
+                { activation: 'gelu', type: 'best', reason: 'Versatile modern choice for most special applications' },
+                { activation: 'mish', type: 'alternative', reason: 'Self-regularizing for complex architectures' }
+            ]
+        };
+
+        // Initialize wizard
+        function initWizard() {
+            updateProgressBar();
+            setupEventListeners();
+            createPerformanceChart();
+        }
+
+        function setupEventListeners() {
+            // Choice card selection
+            document.addEventListener('click', (e) => {
+                const choiceCard = e.target.closest('.choice-card');
+                if (choiceCard) {
+                    selectChoice(choiceCard);
+                }
+            });
+
+            // Framework toggle
+            document.querySelectorAll('.framework-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    currentFramework = e.target.dataset.framework;
+                    updateFrameworkToggle();
+                    updateImplementationCode();
+                });
+            });
+        }
+
+        function selectChoice(card) {
+            // Remove previous selections in this step
+            card.parentElement.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+
+            // Store choice
+            const choice = card.dataset.choice;
+            userChoices[`step${currentStep}`] = choice;
+
+            // Enable next button
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function nextStep() {
+            if (currentStep < 5) {
+                // Hide current step
+                document.querySelectorAll('.step-content.active').forEach(step => step.classList.remove('active'));
+                
+                currentStep++;
+                
+                // Determine which step to show based on user path
+                let stepId = determineNextStep();
+                
+                // Show next step
+                document.getElementById(stepId).classList.add('active');
+                
+                updateProgressBar();
+                updateNavigation();
+            }
+        }
+
+        function determineNextStep() {
+            if (currentStep === 2) {
+                if (userChoices.step1 === 'output-layer') {
+                    return 'step2-output';
+                } else if (userChoices.step1 === 'hidden-layers') {
+                    return 'step2-hidden';
+                } else {
+                    // Skip to recommendations for special purpose
+                    currentStep = 5;
+                    generateRecommendations();
+                    return 'step5-recommendations';
+                }
+            } else if (currentStep === 3) {
+                if (userChoices.step1 === 'output-layer') {
+                    // Skip architecture step for output layers
+                    currentStep = 5;
+                    generateRecommendations();
+                    return 'step5-recommendations';
+                } else if (userChoices.step2 === 'modern-performance') {
+                    return 'step3-architecture';
+                } else {
+                    return 'step4-requirements';
+                }
+            } else if (currentStep === 4) {
+                return 'step4-requirements';
+            } else if (currentStep === 5) {
+                generateRecommendations();
+                return 'step5-recommendations';
+            }
+            return `step${currentStep}`;
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                // Hide current step
+                document.querySelectorAll('.step-content.active').forEach(step => step.classList.remove('active'));
+                
+                currentStep--;
+                
+                // Determine which previous step to show
+                let stepId = determinePreviousStep();
+                
+                document.getElementById(stepId).classList.add('active');
+                
+                updateProgressBar();
+                updateNavigation();
+            }
+        }
+
+        function determinePreviousStep() {
+            if (currentStep === 1) {
+                return 'step1';
+            } else if (currentStep === 2) {
+                if (userChoices.step1 === 'output-layer') {
+                    return 'step2-output';
+                } else if (userChoices.step1 === 'hidden-layers') {
+                    return 'step2-hidden';
+                }
+                return 'step1';
+            } else if (currentStep === 3) {
+                return 'step3-architecture';
+            } else if (currentStep === 4) {
+                return 'step4-requirements';
+            } else if (currentStep === 5) {
+                return 'step5-recommendations';
+            }
+            return `step${currentStep}`;
+        }
+
+        function updateProgressBar() {
+            const progressFill = document.getElementById('progressFill');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            
+            // Update progress line
+            const progressPercentage = ((currentStep - 1) / 4) * 100;
+            progressFill.style.width = `${progressPercentage}%`;
+            
+            // Update step indicators
+            progressSteps.forEach((step, index) => {
+                const stepNumber = index + 1;
+                step.classList.remove('active', 'completed');
+                
+                if (stepNumber < currentStep) {
+                    step.classList.add('completed');
+                    step.innerHTML = '<i class="fas fa-check"></i>';
+                } else if (stepNumber === currentStep) {
+                    step.classList.add('active');
+                    step.innerHTML = stepNumber;
+                } else {
+                    step.innerHTML = stepNumber;
+                }
+            });
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentStep === 1;
+            
+            if (currentStep === 5) {
+                nextBtn.style.display = 'none';
+            } else {
+                nextBtn.style.display = 'flex';
+                // Check if user made a choice in current step
+                const hasChoice = userChoices[`step${currentStep}`];
+                nextBtn.disabled = !hasChoice;
+            }
+        }
+
+        function generateRecommendations() {
+            const container = document.getElementById('recommendationsContainer');
+            const choicePath = Object.values(userChoices).join('.');
+            
+            let recommendationList = recommendations[choicePath] || [
+                { activation: 'relu', type: 'best', reason: 'Safe default choice for most use cases' }
+            ];
+
+            container.innerHTML = recommendationList.map(rec => {
+                const data = activationData[rec.activation];
+                return `
+                    <div class="recommendation-card ${rec.type}" data-activation="${rec.activation}">
+                        <div class="recommendation-header">
+                            <div class="recommendation-icon">
+                                <i class="fas ${rec.type === 'best' ? 'fa-star' : 'fa-lightbulb'}"></i>
+                            </div>
+                            <div class="recommendation-title">${data.name}</div>
+                            <div class="recommendation-badge ${rec.type}">${rec.type === 'best' ? 'Recommended' : 'Alternative'}</div>
+                        </div>
+                        <div class="recommendation-description">${rec.reason}</div>
+                        <div class="pros-cons">
+                            <div class="pros">
+                                <h4><i class="fas fa-thumbs-up"></i> Pros</h4>
+                                <ul>
+                                    ${data.pros.map(pro => `<li>• ${pro}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="cons">
+                                <h4><i class="fas fa-thumbs-down"></i> Cons</h4>
+                                <ul>
+                                    ${data.cons.map(con => `<li>• ${con}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="highlight-box">
+                            <h4>Formula: ${data.formula}</h4>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            updateImplementationCode();
+        }
+
+        function updateImplementationCode() {
+            const container = document.getElementById('implementationCode');
+            const recommendationCards = document.querySelectorAll('.recommendation-card');
+            
+            if (recommendationCards.length > 0) {
+                const firstRecommendation = recommendationCards[0].dataset.activation;
+                const data = activationData[firstRecommendation];
+                const code = currentFramework === 'pytorch' ? data.pytorch : data.tensorflow;
+                container.innerHTML = `<pre><code>${code}</code></pre>`;
+            }
+        }
+
+        function updateFrameworkToggle() {
+            document.querySelectorAll('.framework-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.framework === currentFramework);
+            });
+        }
+
+        function createPerformanceChart() {
+            const data = [{
+                x: ['ReLU', 'LeakyReLU', 'GELU', 'Mish', 'Hardswish', 'Sigmoid', 'Tanh'],
+                y: [0.006, 0.008, 0.028, 0.104, 0.015, 0.014, 0.023],
+                type: 'bar',
+                marker: {
+                    color: ['#3498db', '#2ecc71', '#9b59b6', '#e74c3c', '#f39c12', '#34495e', '#95a5a6'],
+                    line: {
+                        color: '#2c3e50',
+                        width: 2
+                    }
+                },
+                name: 'Inference Time (ms)'
+            }];
+
+            const layout = {
+                title: {
+                    text: 'Activation Function Performance Comparison',
+                    font: { family: 'Inter', size: 16, color: '#2c3e50' }
+                },
+                xaxis: {
+                    title: 'Activation Function',
+                    font: { family: 'Inter', color: '#2c3e50' }
+                },
+                yaxis: {
+                    title: 'Average Time (ms)',
+                    font: { family: 'Inter', color: '#2c3e50' }
+                },
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                font: { family: 'Inter' },
+                margin: { t: 50, r: 20, b: 50, l: 50 }
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: false
+            };
+
+            Plotly.newPlot('performanceChart', data, layout, config);
+        }
+
+        function resetWizard() {
+            currentStep = 1;
+            userChoices = {};
+            
+            // Hide all steps
+            document.querySelectorAll('.step-content').forEach(step => step.classList.remove('active'));
+            
+            // Show first step
+            document.getElementById('step1').classList.add('active');
+            
+            // Clear selections
+            document.querySelectorAll('.choice-card').forEach(card => card.classList.remove('selected'));
+            
+            updateProgressBar();
+            updateNavigation();
+        }
+
+        // Initialize when DOM loads
+        document.addEventListener('DOMContentLoaded', initWizard);
+    </script>
+</body>
+</html>
